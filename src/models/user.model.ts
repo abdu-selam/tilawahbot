@@ -7,7 +7,7 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
-    
+
     utype: {
       type: String,
       enum: ["user", "admin"],
@@ -15,3 +15,7 @@ const userSchema = new Schema(
   },
   { timestamps: true },
 );
+
+const User = model("users", userSchema);
+
+export default User;
