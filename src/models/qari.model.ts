@@ -2,8 +2,14 @@ import { model, Schema } from "mongoose";
 
 const qariSchema = new Schema(
   {
-    nameEn: String,
-    nameAr: String,
+    nameEn: {
+      type: String,
+      required: true,
+    },
+    nameAr: {
+      type: String,
+      required: true,
+    },
 
     image: String,
   },
