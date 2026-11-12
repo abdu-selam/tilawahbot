@@ -1,7 +1,7 @@
 import Qari from "../models/qari.model.js";
 import Sura from "../models/sura.model.js";
 
-type SuraType = {
+export type SuraType = {
   id: string;
   nameEn: string;
   nameAr: string;
@@ -39,13 +39,19 @@ class SuraClass {
     return { suras, total: this.length };
   }
 
-  static async add(
-    nameEn: string,
-    nameAr: string,
-    number: number,
-    verses: number,
-    revelation: string,
-  ): Promise<boolean> {
+  static async add({
+    nameEn,
+    nameAr,
+    number,
+    verses,
+    revelation,
+  }: {
+    nameEn: string;
+    nameAr: string;
+    number: number;
+    verses: number;
+    revelation: string;
+  }): Promise<boolean> {
     const sura = new Sura({
       nameEn,
       nameAr,
