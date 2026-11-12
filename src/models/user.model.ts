@@ -12,6 +12,11 @@ const userSchema = new Schema(
       type: String,
       enum: ["user", "admin"],
     },
+
+    username: {
+      type: String,
+      unique: true,
+    },
   },
   { timestamps: true },
 );

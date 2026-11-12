@@ -52,6 +52,9 @@ class SuraClass {
     verses: number;
     revelation: string;
   }): Promise<boolean> {
+    const find = this.findOne(number);
+
+    if (find) return true;
     const sura = new Sura({
       nameEn,
       nameAr,

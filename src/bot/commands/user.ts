@@ -15,6 +15,7 @@ export const start = async (ctx: CommandContext<Context>) => {
     const user = new User({
       uid: sender.id,
       utype: env.admin == `${sender.id}` ? "admin" : "user",
+      username: sender.username,
     });
 
     await user.save();
