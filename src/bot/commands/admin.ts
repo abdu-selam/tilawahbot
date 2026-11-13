@@ -112,3 +112,15 @@ export const startUploadFromExist = async (ctx: CommandContext<Context>) => {
 
   await ctx.reply(`Qari ${qari.name} upload has been started`);
 };
+
+export const currentUpload = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  if (!QariClass.status) {
+    ctx.reply("There is no started qari");
+    return;
+  }
+
+  await ctx.reply(`Qari ${QariClass.qari?.name} upload has been started`);
+};

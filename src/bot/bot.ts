@@ -3,6 +3,7 @@ import env from "../utils/env.js";
 import { start as startCommand } from "./commands/user.js";
 import {
   addAdmin,
+  currentUpload,
   listAllQari,
   startUpload,
   stopUpload,
@@ -16,6 +17,7 @@ bot.command("add", addAdmin);
 bot.command("stopupload", stopUpload);
 
 bot.command("list", listAllQari);
+bot.command("current", currentUpload);
 
 bot.on("message:photo", startUpload);
 
