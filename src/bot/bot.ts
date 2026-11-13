@@ -9,6 +9,7 @@ import {
   stopUpload,
 } from "./commands/admin.js";
 import { uploadQurans } from "./commands/channel.js";
+import { selectQaris } from "./commands/buttons.js";
 
 const bot = new Bot(env.token);
 
@@ -31,8 +32,8 @@ bot.on("channel_post", async (ctx) => {
   }
 });
 
-bot.catch((err) => {
-    
-})
+bot.callbackQuery("select_qari", selectQaris);
+
+bot.catch((err) => {});
 
 export default bot;

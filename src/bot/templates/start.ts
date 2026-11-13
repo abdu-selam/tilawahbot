@@ -24,3 +24,12 @@ May Allah accept your listening, recitation, and remembrance of Him.
 
 <b>May the Quran always be your companion.</b>
 `;
+
+export const chooseQari = `<blockquote>Choose Your Qari</blockquote>
+
+Listen to beautiful Quran recitations from different Qaris.
+
+<b><em>Please select your preferred Qari from the list below to explore their recitations and choose a Surah.</em></b>
+
+<blockquote><b><em>May Allah make the Quran the light of our hearts.</em></b></blockquote>
+`;

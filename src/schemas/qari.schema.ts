@@ -27,7 +27,7 @@ class QariClass {
     this.length = qaris.length;
   }
 
-  static find({ page = 0, all = false }): {
+  static find({ page = 0, all = false }: { page?: number; all?: boolean }): {
     qaris: QariType[];
     total: number;
   } {
