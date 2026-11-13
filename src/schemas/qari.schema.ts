@@ -10,6 +10,9 @@ class QariClass {
   static allQari: QariType[] = [];
   static length: number = 0;
 
+  static status: boolean = false;
+  static qari: QariType | null = null;
+
   static async fill() {
     const allQari = await Qari.find();
 
@@ -55,6 +58,26 @@ class QariClass {
   static findOne(id: string): QariType | null {
     const qari = this.allQari.find((qari) => qari.id == id);
     if (!qari) return null;
+
+    return qari;
+  }
+
+  static startAdd(id: string): boolean {
+    const qari = this.findOne(id);
+    if (!qari) {
+      return false;
+    }
+
+    this.status = true;
+    this.qari = structuredClone(qari);
+
+    return true;
+  }
+
+  static stopAdd(): QariType | null {
+    this.status = false;
+    const qari = structuredClone(this.qari);
+    this.qari = null;
 
     return qari;
   }
