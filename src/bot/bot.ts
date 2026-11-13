@@ -10,10 +10,12 @@ import {
 } from "./commands/admin.js";
 import { uploadQurans } from "./commands/channel.js";
 import {
+  nextQariForSura,
   nextQaris,
   nextSuraForQari,
   nextSuras,
   selectQaris,
+  selectQarisForSura,
   selectSurah,
   selectSurahForQari,
 } from "./commands/buttons.js";
@@ -45,10 +47,15 @@ bot.callbackQuery(/^back_qari:(-?\d+)$/, nextQaris);
 
 bot.callbackQuery(/^qari:([a-zA-Z0-9]+)$/, selectSurahForQari);
 bot.callbackQuery(/^next_suraqari:(\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
+bot.callbackQuery(/^back_suraqari:(-?\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
 
 bot.callbackQuery("select_sura", selectSurah);
 bot.callbackQuery(/^next_sura:(\d+)$/, nextSuras);
 bot.callbackQuery(/^back_sura:(-?\d+)$/, nextSuras);
+
+bot.callbackQuery(/^sura:([a-zA-Z0-9]+)$/, selectQarisForSura);
+bot.callbackQuery(/^next_qarisura:(\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
+bot.callbackQuery(/^back_qarisura:(-?\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
 
 
 bot.catch((err) => {

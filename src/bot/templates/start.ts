@@ -54,3 +54,35 @@ You selected:
 
 <blockquote><b><i>May Allah bless your listening.</i></b></blockquote>
 `;
+
+export const choseQariForSura = ({
+  nameEn,
+  nameAr,
+  number,
+  verses,
+  revelation,
+}: {
+  nameEn: string;
+  nameAr: string;
+  number: number;
+  verses: number;
+  revelation: string;
+}) => {
+  return `
+<blockquote>Choose a Qari</blockquote>
+
+${nameEn} | <b>${nameAr}</b>
+
+━━━━━━━━━━━━━━
+
+<b>Surah Number:</b> ${number}
+<b>Verses:</b> ${verses}
+<b>Revelation:</b> ${revelation} | ${revelation === "Meccan" ? "مَكِّيَّة" : "مَدَنِيَّة"}
+
+━━━━━━━━━━━━━━
+
+<b><em>Choose your preferred Qari from the list below to listen to this Surah in their beautiful recitation.</em></b> 
+
+May Allah bless your listening.
+  `.trim();
+};

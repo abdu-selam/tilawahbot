@@ -4,6 +4,7 @@ import {
   type Context,
 } from "grammy";
 import SuraClass, { type SuraType } from "../../schemas/sura.schema.js";
+import type { QariType } from "../../schemas/qari.schema.js";
 
 export const generateSuraKeyboard = (
   ctx: CallbackQueryContext<Context>,
@@ -31,6 +32,31 @@ export const generateSuraKeyboard = (
   }
 
   keyboard.text("Back", back).text("Full", full).text("Next", next);
+
+  return keyboard;
+};
+
+export const generateQariKeyboard = (
+  ctx: CallbackQueryContext<Context>,
+  page: number,
+  qaris: QariType[],
+  callback: (qari: QariType) => string,
+  next: string,
+  back: string,
+): InlineKeyboard => {
+  const keyboard = new InlineKeyboard();
+
+  let i = 0;
+  for (const qari of qaris) {
+    keyboard.text(qari.name, `qari:${qari.id}`);
+    if (i % 2 === 1 || qaris.length === i + 1) {
+      keyboard.row();
+    }
+    i++;
+  }
+
+  keyboard.text("Back", back);
+  keyboard.text("Next", next);
 
   return keyboard;
 };

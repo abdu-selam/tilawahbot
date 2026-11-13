@@ -1,4 +1,3 @@
-import Qari from "../models/qari.model.js";
 import Sura from "../models/sura.model.js";
 
 export type SuraType = {
@@ -79,6 +78,13 @@ class SuraClass {
 
   static findOne(number: number): SuraType | null {
     const sura = this.allSura.find((sura) => sura.number == number);
+    if (!sura) return null;
+
+    return sura;
+  }
+
+  static findById(id: string): SuraType | null {
+    const sura = this.allSura.find((sura) => sura.id == id);
     if (!sura) return null;
 
     return sura;
