@@ -2,8 +2,23 @@ import { InlineKeyboard, type CommandContext, type Context } from "grammy";
 import User from "../../models/user.model.js";
 import env from "../../utils/env.js";
 import { startHtml } from "../templates/start.js";
+import { checkAdmin } from "../middlewares/auth.middleware.js";
+import { startUploadFromExist } from "./admin.js";
 
 export const start = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (isAdmin) {
+    const payload = ctx.match;
+    if (payload.startsWith("upload_")) {
+      await startUploadFromExist(ctx);
+    } else {
+      await ctx.reply("Everthing up to date");
+    }
+
+    return;
+  }
+
   const message = ctx.msg;
   const sender = message.from;
 

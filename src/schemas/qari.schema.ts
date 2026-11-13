@@ -73,16 +73,16 @@ class QariClass {
     return qari;
   }
 
-  static startAdd(id: string): boolean {
+  static startAdd(id: string): QariType | null {
     const qari = this.findOne(id);
     if (!qari) {
-      return false;
+      return null;
     }
 
     this.status = true;
     this.qari = structuredClone(qari);
 
-    return true;
+    return qari;
   }
 
   static stopAdd(): QariType | null {

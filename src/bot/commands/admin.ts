@@ -92,11 +92,23 @@ export const listAllQari = async (ctx: CommandContext<Context>) => {
 
   const format = qaris
     .map((qari) => {
-      return `<a href="https://t.me/${env.bot}?start=qari_${qari.id}">${qari.name}</a>\n`;
+      return `<a href="https://t.me/${env.bot}?start=upload_${qari.id}">${qari.name}</a>\n`;
     })
     .join("\n");
 
   await ctx.reply(format, {
     parse_mode: "HTML",
   });
+};
+
+export const startUploadFromExist = async (ctx: CommandContext<Context>) => {
+  const qariId = ctx.match.split("_")[1]!;
+
+  const qari = QariClass.startAdd(qariId);
+  if (!qari) {
+    await ctx.reply("This qari does not exist");
+    return;
+  }
+
+  await ctx.reply(`Qari ${qari.name} upload has been started`);
 };
