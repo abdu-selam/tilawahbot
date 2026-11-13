@@ -26,7 +26,14 @@ class QariClass {
     this.length = qaris.length;
   }
 
-  static find(page: number): { qaris: QariType[]; total: number } {
+  static find({ page = 0, all = false }): {
+    qaris: QariType[];
+    total: number;
+  } {
+    if (all) {
+      const qaris = structuredClone(this.allQari);
+      return { qaris, total: this.length };
+    }
     const start = page * 10;
     const end = start + 10;
     const qaris = structuredClone(this.allQari.slice(start, end));
@@ -55,7 +62,7 @@ class QariClass {
     return {
       id: qari.id,
       name: qari.nameEn,
-      nameAr: qari.nameAr
+      nameAr: qari.nameAr,
     };
   }
 

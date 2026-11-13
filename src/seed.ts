@@ -1,3 +1,4 @@
+import QariClass from "./schemas/qari.schema.js";
 import SuraClass from "./schemas/sura.schema.js";
 
 type SuraType = {
@@ -245,6 +246,10 @@ const seed = async () => {
     await SuraClass.add({ ...sura, number: num });
     num++;
   }
+};
+
+export const load = async () => {
+  await Promise.all([SuraClass.fill(), QariClass.fill()]);
 };
 
 export default seed;

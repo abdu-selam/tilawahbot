@@ -9,6 +9,8 @@ const env = {
 
   pictures: process.env.PICTURE_CHANNEL_ID || "",
   qurans: process.env.QURAN_CHANNEL_ID || "",
+
+  bot: process.env.BOT_LINK,
 };
 
 export default env;

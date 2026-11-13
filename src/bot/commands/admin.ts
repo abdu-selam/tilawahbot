@@ -83,3 +83,20 @@ export const startUpload = async (ctx: CtxWithPicture) => {
   QariClass.startAdd(qari.id);
   await ctx.reply(`Qari ${qari.name} upload has been started`);
 };
+
+export const listAllQari = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const { qaris } = QariClass.find({ all: true });
+
+  const format = qaris
+    .map((qari) => {
+      return `<a href="https://t.me/${env.bot}?start=qari_${qari.id}">${qari.name}</a>\n`;
+    })
+    .join("\n");
+
+  await ctx.reply(format, {
+    parse_mode: "HTML",
+  });
+};

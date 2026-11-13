@@ -1,7 +1,12 @@
 import { Bot } from "grammy";
 import env from "../utils/env.js";
 import { start as startCommand } from "./commands/user.js";
-import { addAdmin, startUpload, stopUpload } from "./commands/admin.js";
+import {
+  addAdmin,
+  listAllQari,
+  startUpload,
+  stopUpload,
+} from "./commands/admin.js";
 
 const bot = new Bot(env.token);
 
@@ -9,6 +14,8 @@ bot.command("start", startCommand);
 
 bot.command("add", addAdmin);
 bot.command("stopupload", stopUpload);
+
+bot.command("list", listAllQari);
 
 bot.on("message:photo", startUpload);
 
