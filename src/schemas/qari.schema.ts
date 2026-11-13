@@ -38,7 +38,7 @@ class QariClass {
     name: string,
     nameAr: string,
     image: string,
-  ): Promise<boolean> {
+  ): Promise<QariType> {
     const qari = new Qari({
       nameEn: name,
       nameAr,
@@ -52,7 +52,11 @@ class QariClass {
       id: qari.id,
     });
 
-    return true;
+    return {
+      id: qari.id,
+      name: qari.nameEn,
+      nameAr: qari.nameAr
+    };
   }
 
   static findOne(id: string): QariType | null {
