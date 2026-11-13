@@ -58,3 +58,42 @@ export const selectSurah = async (ctx: CallbackQueryContext<Context>) => {
     reply_markup: keyboard,
   });
 };
+
+export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
+  const page = Number(ctx.match[1]);
+
+  const { qaris, total } = QariClass.find({ page });
+  if (!qaris.length) {
+    await ctx.answerCallbackQuery({
+      text: "Qaris has been completed",
+      show_alert: true,
+    });
+    return;
+  }
+
+  await ctx.answerCallbackQuery();
+  if (ctx.chat?.id && ctx.msg?.message_id) {
+    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
+  }
+
+  const keyboard = new InlineKeyboard();
+
+  let i = 0;
+  for (const qari of qaris) {
+    keyboard.text(qari.name, `qari:${qari.id}`);
+    if (i % 2 === 1 || qaris.length === i + 1) {
+      keyboard.row();
+    }
+    i++;
+  }
+
+  keyboard.text("Back", `back_qari:${page - 1}`);
+  if (total > (page + 1) * 10) {
+    keyboard.text("Next", `next_qari:${page + 1}`);
+  }
+
+  await ctx.reply(chooseQari, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
