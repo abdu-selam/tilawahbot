@@ -11,6 +11,7 @@ import {
 import { uploadQurans } from "./commands/channel.js";
 import {
   nextQaris,
+  nextSuraForQari,
   nextSuras,
   selectQaris,
   selectSurah,
@@ -41,7 +42,9 @@ bot.on("channel_post", async (ctx) => {
 bot.callbackQuery("select_qari", selectQaris);
 bot.callbackQuery(/^next_qari:(\d+)$/, nextQaris);
 bot.callbackQuery(/^back_qari:(-?\d+)$/, nextQaris);
+
 bot.callbackQuery(/^qari:([a-zA-Z0-9]+)$/, selectSurahForQari);
+bot.callbackQuery(/^next_suraqari:(\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
 
 bot.callbackQuery("select_sura", selectSurah);
 bot.callbackQuery(/^next_sura:(\d+)$/, nextSuras);

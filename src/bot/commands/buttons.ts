@@ -107,11 +107,10 @@ export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(ctx.match[1]);
   const keyboard = generateSuraKeyboard(
     ctx,
-    (sura, page) => ({
-      each: `sura:${sura.id}`,
-      next: `next_sura:${page + 1}`,
-      back: `back_sura:${page - 1}`,
-    }),
+    (sura) => `sura:${sura.id}`,
+    `next_sura:${page + 1}`,
+    `back_sura:${page - 1}`,
+    "full_sura",
     page,
   );
 
@@ -144,11 +143,61 @@ export const selectSurahForQari = async (
   const qari = QariClass.findOne(qariId);
   if (!qari) return;
 
-  const keyboard = generateSuraKeyboard(ctx, (sura, page) => ({
-    each: `suraqari:${sura.id}-${qari.id}`,
-    next: `next_suraqari:${page + 1}`,
-    back: `back_suraqari:${page - 1}`,
-  }));
+  const keyboard = generateSuraKeyboard(
+    ctx,
+    (sura) => `suraqari:${sura.id}-${qari.id}`,
+    `next_suraqari:0-${qari.id}`,
+    `back_suraqari:-1-${qari.id}`,
+    `full_sura:${qari.id}`,
+  );
+
+  if (!keyboard) {
+    await ctx.answerCallbackQuery({
+      text: "Surahs limit has been reached",
+      show_alert: true,
+    });
+    return;
+  }
+
+  await ctx.answerCallbackQuery();
+  if (ctx.chat?.id && ctx.msg?.message_id) {
+    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
+  }
+
+  const html = choseSuraForQari(qari.name, qari.nameAr);
+  await ctx.replyWithPhoto(qari.image, {
+    caption: html,
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
+  const parse = ctx.match[1]?.split("-");
+
+  if (!parse?.length) {
+    await ctx.answerCallbackQuery({
+      text: "Surahs limit has been reached",
+      show_alert: true,
+    });
+    return;
+  }
+
+  const page = Number(parse[0]);
+  const qari = QariClass.findOne(parse.at(-1)!);
+  if (!qari) {
+    await ctx.answerCallbackQuery();
+    return;
+  }
+
+  const keyboard = generateSuraKeyboard(
+    ctx,
+    (sura) => `suraqari:${sura.id}-${qari.id}`,
+    `next_suraqari:${page + 1}-${qari.id}`,
+    `back_suraqari:${page - 1}-${qari.id}`,
+    `full_sura:${qari.id}`,
+    page,
+  );
 
   if (!keyboard) {
     await ctx.answerCallbackQuery({
