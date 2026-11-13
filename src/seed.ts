@@ -243,8 +243,9 @@ const surahs: SuraType[] = [
 const seed = async () => {
   let num = 1;
   for (const sura of surahs) {
-    await SuraClass.add({ ...sura, number: num });
+    const input = { ...sura, number: num };
     num++;
+    await SuraClass.add({ ...input });
   }
 };
 

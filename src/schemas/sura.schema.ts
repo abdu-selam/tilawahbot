@@ -16,10 +16,10 @@ class SuraClass {
   static length: number = 0;
 
   static async fill() {
-    const allSura = await Sura.find();
+    const allSura = await Sura.find().lean();
 
-    const suras = allSura.map((sura) => ({
-      id: sura.id,
+    this.allSura = allSura.map((sura) => ({
+      id: sura._id.toString(),
       nameEn: sura.nameEn,
       nameAr: sura.nameAr,
       number: sura.number,
@@ -27,14 +27,15 @@ class SuraClass {
       revelation: sura.revelation,
     }));
 
-    this.allSura = structuredClone(suras);
-    this.length = suras.length;
+    this.length = this.allSura.length;
   }
 
   static find(page: number = 0): SuraType[] {
     const start = page * 15;
-    const end = start + 15;
-    const suras = structuredClone(this.allSura.slice(start, end));
+    const end = start + 15 < this.length ? start + 15 : this.length;
+
+    const selected = this.allSura.slice(start, end);
+    const suras = structuredClone(selected);
 
     return suras;
   }
