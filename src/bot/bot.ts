@@ -8,6 +8,7 @@ import {
   startUpload,
   stopUpload,
 } from "./commands/admin.js";
+import { uploadQurans } from "./commands/channel.js";
 
 const bot = new Bot(env.token);
 
@@ -22,8 +23,16 @@ bot.command("current", currentUpload);
 bot.on("message:photo", startUpload);
 
 bot.on("channel_post", async (ctx) => {
-  const channel = JSON.stringify(ctx.chat, null, 2);
-  await ctx.api.sendMessage(env.admin!, channel);
+  const channel = ctx.chat;
+
+  if (channel.id == Number(env.qurans)) {
+    await uploadQurans(ctx);
+    return;
+  }
 });
+
+bot.catch((err) => {
+    
+})
 
 export default bot;

@@ -12,6 +12,7 @@ class QariClass {
 
   static status: boolean = false;
   static qari: QariType | null = null;
+  static current: number = 1;
 
   static async fill() {
     const allQari = await Qari.find();
@@ -89,6 +90,7 @@ class QariClass {
     this.status = false;
     const qari = structuredClone(this.qari);
     this.qari = null;
+    this.current = 1;
 
     return qari;
   }
