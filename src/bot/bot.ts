@@ -9,7 +9,13 @@ import {
   stopUpload,
 } from "./commands/admin.js";
 import { uploadQurans } from "./commands/channel.js";
-import { nextQaris, nextSuras, selectQaris, selectSurah } from "./commands/buttons.js";
+import {
+  nextQaris,
+  nextSuras,
+  selectQaris,
+  selectSurah,
+  selectSurahForQari,
+} from "./commands/buttons.js";
 
 const bot = new Bot(env.token);
 
@@ -34,10 +40,16 @@ bot.on("channel_post", async (ctx) => {
 
 bot.callbackQuery("select_qari", selectQaris);
 bot.callbackQuery(/^next_qari:(\d+)$/, nextQaris);
+bot.callbackQuery(/^back_qari:(-?\d+)$/, nextQaris);
+bot.callbackQuery(/^qari:([a-zA-Z0-9]+)$/, selectSurahForQari);
 
 bot.callbackQuery("select_sura", selectSurah);
 bot.callbackQuery(/^next_sura:(\d+)$/, nextSuras);
+bot.callbackQuery(/^back_sura:(-?\d+)$/, nextSuras);
 
-bot.catch((err) => {});
+
+bot.catch((err) => {
+  console.log(err.message)
+});
 
 export default bot;

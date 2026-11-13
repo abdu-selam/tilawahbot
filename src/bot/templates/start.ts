@@ -39,4 +39,18 @@ export const chooseSura = `<blockquote>Choose a Surah</blockquote>
 Select a Surah from the Holy Quran below to explore its available recitations.
 
 <blockquote>Choose the Surah you'd like to listen to and enjoy the beautiful words of Allah.
-<b><em>May Allah bless your listening.</em></b></blockquote>`
+<b><em>May Allah bless your listening.</em></b></blockquote>
+`;
+
+export const choseSuraForQari = (nameEn: string, nameAr: string) => `
+<blockquote>Qari Selected</blockquote>
+
+You selected:
+
+<b>English:</b> ${nameEn}
+<b>Arabic:</b> ${nameAr}
+
+<b><em>Now, choose a Surah from the Holy Quran to listen to this Qari's beautiful recitation.</em></b>
+
+<blockquote><b><i>May Allah bless your listening.</i></b></blockquote>
+`;

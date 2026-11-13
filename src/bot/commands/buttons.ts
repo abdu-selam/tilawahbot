@@ -4,8 +4,13 @@ import {
   type Context,
 } from "grammy";
 import QariClass from "../../schemas/qari.schema.js";
-import { chooseQari, chooseSura } from "../templates/start.js";
+import {
+  chooseQari,
+  chooseSura,
+  choseSuraForQari,
+} from "../templates/start.js";
 import SuraClass from "../../schemas/sura.schema.js";
+import { generateSuraKeyboard } from "../services/button.service.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await ctx.answerCallbackQuery();
@@ -63,9 +68,9 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(ctx.match[1]);
 
   const { qaris, total } = QariClass.find({ page });
-  if (!qaris.length) {
+  if (!qaris.length || page < 0) {
     await ctx.answerCallbackQuery({
-      text: "Qaris has been completed",
+      text: "Qaris limit has been reached",
       show_alert: true,
     });
     return;
@@ -100,11 +105,19 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
 
 export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(ctx.match[1]);
+  const keyboard = generateSuraKeyboard(
+    ctx,
+    (sura, page) => ({
+      each: `sura:${sura.id}`,
+      next: `next_sura:${page + 1}`,
+      back: `back_sura:${page - 1}`,
+    }),
+    page,
+  );
 
-  const suras = SuraClass.find(page);
-  if (!suras.length) {
+  if (!keyboard) {
     await ctx.answerCallbackQuery({
-      text: "Surahs has been completed",
+      text: "Surahs limit has been reached",
       show_alert: true,
     });
     return;
@@ -115,23 +128,44 @@ export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
     await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
   }
 
-  const keyboard = new InlineKeyboard();
+  await ctx.reply(chooseQari, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
 
-  let i = 0;
-  for (const sura of suras) {
-    keyboard.text(`${sura.number} (${sura.nameEn})`, `sura:${sura.id}`);
-    if (i % 3 === 2) {
-      keyboard.row();
-    }
-    i++;
+export const selectSurahForQari = async (
+  ctx: CallbackQueryContext<Context>,
+) => {
+  const qariId = ctx.match[1];
+  await ctx.answerCallbackQuery();
+  if (!qariId) return;
+
+  const qari = QariClass.findOne(qariId);
+  if (!qari) return;
+
+  const keyboard = generateSuraKeyboard(ctx, (sura, page) => ({
+    each: `suraqari:${sura.id}-${qari.id}`,
+    next: `next_suraqari:${page + 1}`,
+    back: `back_suraqari:${page - 1}`,
+  }));
+
+  if (!keyboard) {
+    await ctx.answerCallbackQuery({
+      text: "Surahs limit has been reached",
+      show_alert: true,
+    });
+    return;
   }
 
-  keyboard
-    .text("Back", `back_sura:${page - 1}`)
-    .text("Full", "full_sura")
-    .text("Next", `next_sura:${page + 1}`);
+  await ctx.answerCallbackQuery();
+  if (ctx.chat?.id && ctx.msg?.message_id) {
+    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
+  }
 
-  await ctx.reply(chooseQari, {
+  const html = choseSuraForQari(qari.name, qari.nameAr);
+  await ctx.replyWithPhoto(qari.image, {
+    caption: html,
     parse_mode: "HTML",
     reply_markup: keyboard,
   });

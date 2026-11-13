@@ -4,6 +4,7 @@ type QariType = {
   id: string;
   name: string;
   nameAr: string;
+  image: string;
 };
 
 class QariClass {
@@ -21,6 +22,7 @@ class QariClass {
       id: qari.id,
       name: qari.nameEn,
       nameAr: qari.nameAr,
+      image: qari.image || "",
     }));
 
     this.allQari = structuredClone(qaris);
@@ -58,12 +60,14 @@ class QariClass {
       name,
       nameAr,
       id: qari.id,
+      image,
     });
 
     return {
       id: qari.id,
       name: qari.nameEn,
       nameAr: qari.nameAr,
+      image,
     };
   }
 
