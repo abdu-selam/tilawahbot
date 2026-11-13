@@ -9,12 +9,14 @@ import {
   chooseSura,
   choseQariForSura,
   choseSuraForQari,
+  recitationCaption,
 } from "../templates/start.js";
 import SuraClass from "../../schemas/sura.schema.js";
 import {
   generateQariKeyboard,
   generateSuraKeyboard,
 } from "../services/button.service.js";
+import Recite from "../../models/recite.model.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await ctx.answerCallbackQuery();
@@ -301,6 +303,52 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
 
   const html = choseQariForSura({ ...sura });
   await ctx.reply(html, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
+  const [, suraId, qariId] = ctx.match;
+
+  if (!suraId || !qariId) {
+    await ctx.answerCallbackQuery({
+      text: "404: Recite is not found",
+      show_alert: true,
+    });
+    return;
+  }
+
+  const recite = await Recite.findOne({ qari: qariId, sura: suraId }).lean();
+
+  if (!recite) {
+    await ctx.answerCallbackQuery({
+      text: "404: Recite is not found",
+      show_alert: true,
+    });
+    return;
+  }
+
+  await ctx.answerCallbackQuery();
+
+  const qari = QariClass.findOne(qariId)!;
+  const surah = SuraClass.findById(suraId)!;
+
+  const html = recitationCaption({
+    qari,
+    surah,
+    recitation: {
+      fileSize: recite.fileSize!,
+      duration: recite.duration!,
+    },
+  });
+
+  const keyboard = new InlineKeyboard()
+    .text("Qari", "select_qari")
+    .text("Sura", "select_sura");
+
+  await ctx.replyWithAudio(recite.audio!, {
+    caption: html,
     parse_mode: "HTML",
     reply_markup: keyboard,
   });

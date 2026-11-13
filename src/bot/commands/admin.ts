@@ -96,9 +96,14 @@ export const listAllQari = async (ctx: CommandContext<Context>) => {
     })
     .join("\n");
 
-  await ctx.reply(format, {
-    parse_mode: "HTML",
-  });
+  await ctx.reply(
+    `Total qari: ${qaris.length}
+    
+${format}`,
+    {
+      parse_mode: "HTML",
+    },
+  );
 };
 
 export const startUploadFromExist = async (ctx: CommandContext<Context>) => {

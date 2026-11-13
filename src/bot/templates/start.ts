@@ -1,3 +1,12 @@
+import type { QariType } from "../../schemas/qari.schema.js";
+import type { SuraType } from "../../schemas/sura.schema.js";
+import { formatDuration, formatFileSize } from "../../utils/formatter.js";
+
+type RecitationType = {
+  fileSize: number;
+  duration: number;
+};
+
 export const startHtml = `<b>السلام عليكم ورحمة الله وبركاته</b>
 
 <b>Welcome to the Holy Quran Audio Library!</b>
@@ -84,5 +93,35 @@ ${nameEn} | <b>${nameAr}</b>
 <b><em>Choose your preferred Qari from the list below to listen to this Surah in their beautiful recitation.</em></b> 
 
 May Allah bless your listening.
+  `.trim();
+};
+
+export const recitationCaption = ({
+  qari,
+  surah,
+  recitation,
+}: {
+  qari: QariType;
+  surah: SuraType;
+  recitation: RecitationType;
+}) => {
+  return `
+<b>Surah:</b> ${surah.nameEn}
+<b>السورة:</b> ${surah.nameAr}
+
+<b>Qari:</b> ${qari.name}
+<b>القارئ:</b> ${qari.nameAr}
+
+<b>Surah Number:</b> ${surah.number}
+<b>Verses:</b> ${surah.verses}
+
+<b>File Size:</b> ${formatFileSize(recitation.fileSize)}
+<b>Audio Duration:</b> ${formatDuration(recitation.duration)}
+
+━━━━━━━━━━━━━━━━━━
+
+<i>Listen, reflect, and let the words of Allah bring peace to your heart.</i>
+
+اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا
   `.trim();
 };

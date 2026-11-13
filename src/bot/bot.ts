@@ -18,6 +18,7 @@ import {
   selectQarisForSura,
   selectSurah,
   selectSurahForQari,
+  sendQuranAudio,
 } from "./commands/buttons.js";
 
 const bot = new Bot(env.token);
@@ -56,6 +57,8 @@ bot.callbackQuery(/^back_sura:(-?\d+)$/, nextSuras);
 bot.callbackQuery(/^sura:([a-zA-Z0-9]+)$/, selectQarisForSura);
 bot.callbackQuery(/^next_qarisura:(\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
 bot.callbackQuery(/^back_qarisura:(-?\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
+
+bot.callbackQuery(/suraqari:([a-zA-Z0-9]+)-([a-zA-Z0-9]+)$/, sendQuranAudio)
 
 
 bot.catch((err) => {
