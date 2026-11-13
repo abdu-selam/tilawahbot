@@ -4,7 +4,8 @@ import {
   type Context,
 } from "grammy";
 import QariClass from "../../schemas/qari.schema.js";
-import { chooseQari } from "../templates/start.js";
+import { chooseQari, chooseSura } from "../templates/start.js";
+import SuraClass from "../../schemas/sura.schema.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await ctx.answerCallbackQuery();
@@ -18,13 +19,41 @@ export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
     if (i % 2 === 1) {
       keyboard.row();
     }
+    i++;
   }
 
   if (total > 10) {
-    keyboard.text("Next", "next:1");
+    keyboard.text("Next", "next_qari:1");
   }
 
   await ctx.reply(chooseQari, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+export const selectSurah = async (ctx: CallbackQueryContext<Context>) => {
+  await ctx.answerCallbackQuery();
+
+  const suras = SuraClass.find();
+
+  const keyboard = new InlineKeyboard();
+
+  let i = 0;
+  for (const sura of suras) {
+    keyboard.text(`${sura.number} (${sura.nameEn})`, `sura:${sura.id}`);
+    if (i % 3 === 2) {
+      keyboard.row();
+    }
+    i++;
+  }
+
+  keyboard
+    .text("Back", "back_sura:-1")
+    .text("Full", "full_sura")
+    .text("Next", "next_sura:1");
+
+  await ctx.reply(chooseSura, {
     parse_mode: "HTML",
     reply_markup: keyboard,
   });

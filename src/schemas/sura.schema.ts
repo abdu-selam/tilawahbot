@@ -31,12 +31,12 @@ class SuraClass {
     this.length = suras.length;
   }
 
-  static find(page: number): { suras: SuraType[]; total: number } {
+  static find(page: number = 0): SuraType[] {
     const start = page * 15;
     const end = start + 15;
     const suras = structuredClone(this.allSura.slice(start, end));
 
-    return { suras, total: this.length };
+    return suras;
   }
 
   static async add({

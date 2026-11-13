@@ -33,3 +33,10 @@ Listen to beautiful Quran recitations from different Qaris.
 
 <blockquote><b><em>May Allah make the Quran the light of our hearts.</em></b></blockquote>
 `;
+
+export const chooseSura = `<blockquote>Choose a Surah</blockquote>
+
+Select a Surah from the Holy Quran below to explore its available recitations.
+
+<blockquote>Choose the Surah you'd like to listen to and enjoy the beautiful words of Allah.
+<b><em>May Allah bless your listening.</em></b></blockquote>`
