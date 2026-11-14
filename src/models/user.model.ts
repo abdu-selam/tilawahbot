@@ -1,6 +1,6 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const userSchema = new Schema(
+const userSchema = new mongoose.Schema(
   {
     uid: {
       type: Number,
@@ -21,6 +21,5 @@ const userSchema = new Schema(
   { timestamps: true },
 );
 
-const User = model("users", userSchema);
-
-export default User;
+export const User =
+  mongoose.models.users || mongoose.model("users", userSchema);

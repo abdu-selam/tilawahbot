@@ -1,14 +1,24 @@
-import { connect } from "mongoose";
-import env from "../utils/env.js";
+import mongoose, { connect } from "mongoose";
 
-const connectDb = async () => {
+let connectionPromise: Promise<typeof mongoose> | undefined;
+
+async function connectDB(uri: string) {
   try {
-    await connect(env.mongo);
-    console.log("Connected to mongodb")
-  } catch (error) {
-    console.log(error);
-    process.exit(1);
-  }
-};
+    if (mongoose.connection.readyState === 1) {
+      return mongoose;
+    }
 
-export default connectDb;
+    if (!connectionPromise) {
+      connectionPromise = connect(uri, {
+        serverSelectionTimeoutMS: 10000,
+      });
+    }
+
+    return connectionPromise;
+  } catch (error) {
+    connectionPromise = undefined;
+    throw error;
+  }
+}
+
+export default connectDB;

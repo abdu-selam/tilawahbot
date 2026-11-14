@@ -1,6 +1,6 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const qariSchema = new Schema(
+const qariSchema = new mongoose.Schema(
   {
     nameEn: {
       type: String,
@@ -16,6 +16,4 @@ const qariSchema = new Schema(
   { timestamps: true },
 );
 
-const Qari = model("qaris", qariSchema);
-
-export default Qari;
+export const Qari = mongoose.models.qaris || mongoose.model("qaris", qariSchema);

@@ -1,6 +1,6 @@
 import { type CommandContext, type Context } from "grammy";
 import QariClass from "../../schemas/qari.schema.js";
-import Recite from "../../models/recite.model.js";
+import { Recite } from "../../models/models.js";
 import SuraClass from "../../schemas/sura.schema.js";
 import type { CtxForChnnelMessage } from "../../types/bot.types.js";
 

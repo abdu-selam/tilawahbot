@@ -1,6 +1,6 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const suraSchema = new Schema(
+const suraSchema = new mongoose.Schema(
   {
     nameEn: {
       type: String,
@@ -28,6 +28,5 @@ const suraSchema = new Schema(
   { timestamps: true },
 );
 
-const Sura = model("suras", suraSchema);
-
-export default Sura;
+export const Sura =
+  mongoose.models.suras || mongoose.model("suras", suraSchema);

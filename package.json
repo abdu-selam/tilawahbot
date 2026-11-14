@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx --watch src/main.ts",
-    "start": "node dist/main.js"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "types": "wrangler types",
+    "check": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
@@ -14,7 +16,8 @@
   "devDependencies": {
     "@types/node": "^26.6.6",
     "tsx": "^4.23.15",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "wrangler": "^4.162.0"
   },
   "dependencies": {
     "dotenv": "^18.0.10",

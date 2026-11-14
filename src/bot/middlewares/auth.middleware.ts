@@ -1,5 +1,5 @@
 import type { CommandContext, Context } from "grammy";
-import User from "../../models/user.model.js";
+import { User } from "../../models/models.js";
 import type { CtxWithPicture } from "../../types/bot.types.js";
 
 export const checkAdmin = async (
@@ -10,7 +10,7 @@ export const checkAdmin = async (
 
   if (!sender || sender?.is_bot) return false;
 
-  const admin = await User.findOne({ uid: sender.id });
+  const admin = await User.findOne({ uid: sender.id } as any);
 
   if (!admin) return false;
   if (admin.utype !== "admin") return false;

@@ -16,7 +16,7 @@ import {
   generateQariKeyboard,
   generateSuraKeyboard,
 } from "../services/button.service.js";
-import Recite from "../../models/recite.model.js";
+import { Recite } from "../../models/models.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await ctx.answerCallbackQuery();
@@ -319,7 +319,7 @@ export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  const recite = await Recite.findOne({ qari: qariId, sura: suraId }).lean();
+  const recite = await Recite.findOne({ qari: qariId, sura: suraId } as any).lean();
 
   if (!recite) {
     await ctx.answerCallbackQuery({

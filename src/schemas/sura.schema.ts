@@ -1,4 +1,4 @@
-import Sura from "../models/sura.model.js";
+import { Sura } from "../models/models.js";
 
 export type SuraType = {
   id: string;

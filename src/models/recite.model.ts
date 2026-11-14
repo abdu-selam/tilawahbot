@@ -1,13 +1,13 @@
-import { model, Schema } from "mongoose";
+import mongoose  from "mongoose";
 
-const reciteSchema = new Schema(
+const reciteSchema = new mongoose.Schema(
   {
     qari: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "qaris",
     },
     sura: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "suras",
     },
 
@@ -19,6 +19,4 @@ const reciteSchema = new Schema(
   { timestamps: true },
 );
 
-const Recite = model("recites", reciteSchema);
-
-export default Recite;
+export const Recite = mongoose.models.recites || mongoose.model("recites", reciteSchema);

@@ -1,4 +1,4 @@
-import Qari from "../models/qari.model.js";
+import { Qari } from "../models/models.js";
 
 export type QariType = {
   id: string;

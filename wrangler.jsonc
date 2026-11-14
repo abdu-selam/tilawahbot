@@ -1,0 +1,23 @@
+
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "quran-recitation-bot",
+  "main": "src/main.ts",
+  "compatibility_date": "2026-11-14",
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MONGODB",
+        "class_name": "MongoDBConnection"
+      }
+    ]
+  },
+
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_classes": ["MongoDBConnection"]
+    }
+  ]
+}

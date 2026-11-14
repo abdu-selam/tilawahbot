@@ -1,5 +1,4 @@
 import { Bot } from "grammy";
-import env from "../utils/env.js";
 import { start as startCommand } from "./commands/user.js";
 import {
   addAdmin,
@@ -20,49 +19,55 @@ import {
   selectSurahForQari,
   sendQuranAudio,
 } from "./commands/buttons.js";
+import type { Env } from "../types/bot.types.js";
 
-const bot = new Bot(env.token);
+export function createBot(token: string, env: Env) {
+  const bot = new Bot(token);
 
-bot.command("start", startCommand);
+  bot.command("start", startCommand);
 
-bot.command("add", addAdmin);
-bot.command("stopupload", stopUpload);
+  bot.command("add", addAdmin);
+  bot.command("stopupload", stopUpload);
 
-bot.command("list", listAllQari);
-bot.command("current", currentUpload);
+  bot.command("list", (ctx) => {
+    listAllQari(ctx, env);
+  });
+  bot.command("current", currentUpload);
 
-bot.on("message:photo", startUpload);
+  bot.on("message:photo", (ctx) => {
+    startUpload(ctx, env);
+  });
 
-bot.on("channel_post", async (ctx) => {
-  const channel = ctx.chat;
+  bot.on("channel_post", async (ctx) => {
+    const channel = ctx.chat;
 
-  if (channel.id == Number(env.qurans)) {
-    await uploadQurans(ctx);
-    return;
-  }
-});
+    if (channel.id == Number(env.qurans)) {
+      await uploadQurans(ctx);
+      return;
+    }
+  });
 
-bot.callbackQuery("select_qari", selectQaris);
-bot.callbackQuery(/^next_qari:(\d+)$/, nextQaris);
-bot.callbackQuery(/^back_qari:(-?\d+)$/, nextQaris);
+  bot.callbackQuery("select_qari", selectQaris);
+  bot.callbackQuery(/^next_qari:(\d+)$/, nextQaris);
+  bot.callbackQuery(/^back_qari:(-?\d+)$/, nextQaris);
 
-bot.callbackQuery(/^qari:([a-zA-Z0-9]+)$/, selectSurahForQari);
-bot.callbackQuery(/^next_suraqari:(\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
-bot.callbackQuery(/^back_suraqari:(-?\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
+  bot.callbackQuery(/^qari:([a-zA-Z0-9]+)$/, selectSurahForQari);
+  bot.callbackQuery(/^next_suraqari:(\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
+  bot.callbackQuery(/^back_suraqari:(-?\d+-[a-zA-Z0-9]+)$/, nextSuraForQari);
 
-bot.callbackQuery("select_sura", selectSurah);
-bot.callbackQuery(/^next_sura:(\d+)$/, nextSuras);
-bot.callbackQuery(/^back_sura:(-?\d+)$/, nextSuras);
+  bot.callbackQuery("select_sura", selectSurah);
+  bot.callbackQuery(/^next_sura:(\d+)$/, nextSuras);
+  bot.callbackQuery(/^back_sura:(-?\d+)$/, nextSuras);
 
-bot.callbackQuery(/^sura:([a-zA-Z0-9]+)$/, selectQarisForSura);
-bot.callbackQuery(/^next_qarisura:(\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
-bot.callbackQuery(/^back_qarisura:(-?\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
+  bot.callbackQuery(/^sura:([a-zA-Z0-9]+)$/, selectQarisForSura);
+  bot.callbackQuery(/^next_qarisura:(\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
+  bot.callbackQuery(/^back_qarisura:(-?\d+-[a-zA-Z0-9]+)$/, nextQariForSura);
 
-bot.callbackQuery(/suraqari:([a-zA-Z0-9]+)-([a-zA-Z0-9]+)$/, sendQuranAudio)
+  bot.callbackQuery(/suraqari:([a-zA-Z0-9]+)-([a-zA-Z0-9]+)$/, sendQuranAudio);
 
+  bot.catch((err) => {
+    console.log(err.message);
+  });
 
-bot.catch((err) => {
-  console.log(err.message)
-});
-
-export default bot;
+  return bot;
+}

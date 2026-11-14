@@ -1,11 +1,13 @@
 import { InlineKeyboard, type CommandContext, type Context } from "grammy";
-import User from "../../models/user.model.js";
-import env from "../../utils/env.js";
+import { User } from "../../models/models.js";
 import { startHtml } from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { startUploadFromExist } from "./admin.js";
 
-export const start = async (ctx: CommandContext<Context>) => {
+export const start = async (
+  ctx: CommandContext<Context>,
+  env: Record<string, any>,
+) => {
   const isAdmin = await checkAdmin(ctx);
 
   if (isAdmin) {
@@ -24,7 +26,7 @@ export const start = async (ctx: CommandContext<Context>) => {
 
   if (!sender || sender?.is_bot) return;
 
-  const user = await User.findOne({ uid: sender.id });
+  const user = await User.findOne({ uid: sender.id } as any);
 
   if (!user) {
     const user = new User({
