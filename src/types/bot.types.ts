@@ -8,10 +8,10 @@ export interface Env {
   token: string;
   mongo: string;
   WEBHOOK_SECRET: string;
-  admin: string;
+  admin: number;
 
-  pictures: string;
-  qurans: string;
+  pictures: number;
+  qurans: number;
 
   bot: string;
 

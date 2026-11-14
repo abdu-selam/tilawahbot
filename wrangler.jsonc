@@ -1,4 +1,3 @@
-
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "quran-recitation-bot",
@@ -9,15 +8,15 @@
     "bindings": [
       {
         "name": "MONGODB",
-        "class_name": "MongoDBConnection"
-      }
-    ]
+        "class_name": "MongoDBConnection",
+      },
+    ],
   },
 
   "migrations": [
     {
       "tag": "v1",
-      "new_classes": ["MongoDBConnection"]
-    }
-  ]
+      "new_sqlite_classes": ["MongoDBConnection"]
+    },
+  ],
 }
