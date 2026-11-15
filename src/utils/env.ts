@@ -1,9 +1,9 @@
 import { config } from "dotenv";
-import type { Env } from "../types/bot.types.js";
+import type { EnvGeneral } from "../types/bot.types.js";
 
 config();
 
-const env: Env & { port: string | number } = {
+const env: EnvGeneral & { port: string | number } = {
   token: process.env.BOT_TOKEN || "",
   mongo: process.env.MONGODB_URI || "",
   admin: Number(process.env.ADMIN) || 0,

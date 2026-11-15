@@ -2,7 +2,7 @@ import { type CommandContext, type Context } from "grammy";
 import QariClass from "../../schemas/qari.schema.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { formatMessage } from "../../utils/formatter.js";
-import type { CtxWithPicture, Env } from "../../types/bot.types.js";
+import type { CtxWithPicture, Env, EnvGeneral } from "../../types/bot.types.js";
 import { Recite, User } from "../../models/models.js";
 
 export const addAdmin = async (ctx: CommandContext<Context>) => {
@@ -45,7 +45,10 @@ export const stopUpload = async (ctx: CommandContext<Context>) => {
   await ctx.reply(`Uploading of Qari: ${stoped?.name} has been stopped`);
 };
 
-export const startUpload = async (ctx: CtxWithPicture, env: Env) => {
+export const startUpload = async (
+  ctx: CtxWithPicture,
+  env: EnvGeneral | Env,
+) => {
   const isAdmin = await checkAdmin(ctx);
 
   if (!isAdmin) return;
@@ -83,7 +86,10 @@ export const startUpload = async (ctx: CtxWithPicture, env: Env) => {
   await ctx.reply(`Qari ${qari.name} upload has been started`);
 };
 
-export const listAllQari = async (ctx: CommandContext<Context>, env: Env) => {
+export const listAllQari = async (
+  ctx: CommandContext<Context>,
+  env: EnvGeneral | Env,
+) => {
   const isAdmin = await checkAdmin(ctx);
 
   if (!isAdmin) return;

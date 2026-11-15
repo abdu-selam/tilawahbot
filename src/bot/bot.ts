@@ -19,9 +19,9 @@ import {
   selectSurahForQari,
   sendQuranAudio,
 } from "./commands/buttons.js";
-import type { Env } from "../types/bot.types.js";
+import type { Env, EnvGeneral } from "../types/bot.types.js";
 
-export function createBot(token: string, env: Env) {
+export function createBot(token: string, env: EnvGeneral | Env) {
   const bot = new Bot(token);
 
   bot.command("start", startCommand);
