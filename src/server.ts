@@ -8,8 +8,8 @@ const bot = createBot(env.token, env);
 
 const start = async () => {
   await connectDB(env.mongo);
-  await seed();
   await load();
+  await seed();
 
   bot.start();
   app.listen(env.port, () => {
