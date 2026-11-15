@@ -1,5 +1,5 @@
 import { Bot } from "grammy";
-import { start as startCommand } from "./commands/user.js";
+import { qari, start as startCommand } from "./commands/user.js";
 import {
   addAdmin,
   currentUpload,
@@ -33,6 +33,8 @@ export function createBot(token: string, env: Env) {
     listAllQari(ctx, env);
   });
   bot.command("current", currentUpload);
+
+  bot.command("qari", qari);
 
   bot.on("message:photo", (ctx) => {
     startUpload(ctx, env);

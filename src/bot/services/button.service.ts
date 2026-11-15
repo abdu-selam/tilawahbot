@@ -37,10 +37,7 @@ export const generateSuraKeyboard = (
 };
 
 export const generateQariKeyboard = (
-  ctx: CallbackQueryContext<Context>,
-  page: number,
   qaris: QariType[],
-  callback: (qari: QariType) => string,
   next: string,
   back: string,
 ): InlineKeyboard => {

@@ -3,7 +3,7 @@ import QariClass from "../../schemas/qari.schema.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { formatMessage } from "../../utils/formatter.js";
 import type { CtxWithPicture, Env } from "../../types/bot.types.js";
-import { User } from "../../models/models.js";
+import { Recite, User } from "../../models/models.js";
 
 export const addAdmin = async (ctx: CommandContext<Context>) => {
   const isAdmin = await checkAdmin(ctx);
@@ -113,6 +113,9 @@ export const startUploadFromExist = async (ctx: CommandContext<Context>) => {
     await ctx.reply("This qari does not exist");
     return;
   }
+
+  const recites = await Recite.countDocuments({ qari: qariId });
+  QariClass.current = recites + 1;
 
   await ctx.reply(`Qari ${qari.name} upload has been started`);
 };

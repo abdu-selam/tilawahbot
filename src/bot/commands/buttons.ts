@@ -21,12 +21,9 @@ import { Recite } from "../../models/models.js";
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await ctx.answerCallbackQuery();
 
-  const { qaris, total } = QariClass.find({});
+  const { qaris } = QariClass.find({});
   const keyboard = generateQariKeyboard(
-    ctx,
-    0,
     qaris,
-    (qari) => `qari:${qari.id}`,
     `next_qari:${1}`,
     `back_qari:${-1}`,
   );
@@ -76,10 +73,7 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   const keyboard = generateQariKeyboard(
-    ctx,
-    page,
     qaris,
-    (qari) => `qari:${qari.id}`,
     `next_qari:${page + 1}`,
     `back_qari:${page - 1}`,
   );
@@ -238,10 +232,7 @@ export const selectQarisForSura = async (
 
   const { qaris } = QariClass.find({});
   const keyboard = generateQariKeyboard(
-    ctx,
-    0,
     qaris,
-    (qari) => `suraqari:${sura.id}-${qari.id}`,
     `next_qarisura:1-${sura.id}`,
     `back_qarisura:-1-${sura.id}`,
   );
@@ -293,10 +284,7 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   const keyboard = generateQariKeyboard(
-    ctx,
-    page,
     qaris,
-    (qari) => `qari:${qari.id}`,
     `next_qarisura:${page + 1}-${sura.id}`,
     `back_qarisura:${page - 1}-${sura.id}`,
   );
@@ -319,7 +307,10 @@ export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  const recite = await Recite.findOne({ qari: qariId, sura: suraId } as any).lean();
+  const recite = await Recite.findOne({
+    qari: qariId,
+    sura: suraId,
+  } as any).lean();
 
   if (!recite) {
     await ctx.answerCallbackQuery({

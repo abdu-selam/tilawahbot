@@ -1,8 +1,11 @@
 import { InlineKeyboard, type CommandContext, type Context } from "grammy";
 import { User } from "../../models/models.js";
-import { startHtml } from "../templates/start.js";
+import { chooseQari, startHtml } from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { startUploadFromExist } from "./admin.js";
+import { selectQaris } from "./buttons.js";
+import QariClass from "../../schemas/qari.schema.js";
+import { generateQariKeyboard } from "../services/button.service.js";
 
 export const start = async (
   ctx: CommandContext<Context>,
@@ -46,4 +49,22 @@ export const start = async (
     parse_mode: "HTML",
     reply_markup: keyboard,
   });
+};
+
+export const qari = async (ctx: CommandContext<Context>) => {
+  const payload = ctx.match;
+  if (payload.trim() == "") {
+    const { qaris } = QariClass.find({});
+    const keyboard = generateQariKeyboard(
+      qaris,
+      `next_qari:${1}`,
+      `back_qari:${-1}`,
+    );
+
+    await ctx.reply(chooseQari, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
+    return;
+  }
 };

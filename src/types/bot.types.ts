@@ -7,7 +7,7 @@ export type CtxForChnnelMessage = Filter<Context, "channel_post">;
 export interface Env {
   token: string;
   mongo: string;
-  WEBHOOK_SECRET: string;
+  WEBHOOK_SECRET?: string;
   admin: number;
 
   pictures: number;
@@ -15,5 +15,5 @@ export interface Env {
 
   bot: string;
 
-  MONGODB: DurableObjectNamespace;
+  MONGODB?: DurableObjectNamespace;
 }
