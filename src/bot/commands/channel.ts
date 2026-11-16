@@ -31,5 +31,6 @@ export const uploadQurans = async (ctx: CtxForChnnelMessage) => {
   });
 
   await recite.save();
+  await QariClass.addUploaded(QariClass.qari?.id!);
   await ctx.react("👌");
 };

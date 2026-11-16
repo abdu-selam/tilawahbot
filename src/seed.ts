@@ -1,3 +1,4 @@
+import { Recite } from "./models/recite.model.js";
 import QariClass from "./schemas/qari.schema.js";
 import SuraClass from "./schemas/sura.schema.js";
 
@@ -240,13 +241,33 @@ const surahs: SuraType[] = [
   { nameEn: "An-Nas", nameAr: "الناس", verses: 6, revelation: "Meccan" },
 ];
 
-const seed = async () => {
+const seedSura = async () => {
   let num = 1;
   for (const sura of surahs) {
     const input = { ...sura, number: num };
     num++;
     await SuraClass.add({ ...input });
   }
+};
+
+const seedQariUloaded = async () => {
+  const { qaris } = QariClass.find({});
+
+  const uploadeds = await Promise.all(
+    qaris.map((qari) => {
+      return Recite.countDocuments({ qari: qari.id });
+    }),
+  );
+
+  await Promise.all(
+    uploadeds.map((upload, i) =>
+      QariClass.addUploaded(qaris[i]?.id!, upload, false),
+    ),
+  );
+};
+
+const seed = async () => {
+  await Promise.all([seedSura(), seedQariUloaded()]);
 };
 
 export const load = async () => {

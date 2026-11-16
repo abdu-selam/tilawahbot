@@ -12,8 +12,13 @@ const qariSchema = new mongoose.Schema(
     },
 
     image: String,
+    uploaded: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true },
 );
 
-export const Qari = mongoose.models.qaris || mongoose.model("qaris", qariSchema);
+export const Qari =
+  mongoose.models.qaris || mongoose.model("qaris", qariSchema);

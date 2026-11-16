@@ -97,7 +97,10 @@ export const listAllQari = async (
 
   const format = qaris
     .map((qari) => {
-      return `<a href="https://t.me/${env.bot}?start=upload_${qari.id}">${qari.name}</a>\n`;
+      if (qari.uploaded === 114) {
+        return `<blockquote>${qari.name}: Upload completed</blockquote>`;
+      }
+      return `<a href="https://t.me/${env.bot}?start=upload_${qari.id}">${qari.name}: total uploaded ${qari.uploaded}</a>\n`;
     })
     .join("\n");
 
@@ -120,7 +123,19 @@ export const startUploadFromExist = async (ctx: CommandContext<Context>) => {
     return;
   }
 
+  if (qari.uploaded === 114) {
+    await ctx.reply("This qari has all sura upload");
+    QariClass.stopAdd();
+    return;
+  }
+
   const recites = await Recite.countDocuments({ qari: qariId });
+  if (recites === 114) {
+    await ctx.reply("This qari has all sura upload");
+    QariClass.stopAdd();
+    return;
+  }
+
   QariClass.current = recites + 1;
 
   await ctx.reply(`Qari ${qari.name} upload has been started`);

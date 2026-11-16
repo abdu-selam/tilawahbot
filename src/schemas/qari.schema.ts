@@ -5,6 +5,7 @@ export type QariType = {
   name: string;
   nameAr: string;
   image: string;
+  uploaded?: number;
 };
 
 class QariClass {
@@ -23,6 +24,7 @@ class QariClass {
       name: qari.nameEn,
       nameAr: qari.nameAr,
       image: qari.image || "",
+      uploaded: qari.uploaded,
     }));
 
     this.allQari = structuredClone(qaris);
@@ -97,6 +99,33 @@ class QariClass {
     this.current = 1;
 
     return qari;
+  }
+
+  static async addUploaded(
+    id: string,
+    amount: number = 1,
+    add: boolean = true,
+  ) {
+    const qari = this.findOne(id);
+    if (!qari) {
+      return;
+    }
+
+    if (qari.uploaded === 114) {
+      return;
+    }
+
+    const findQari = await Qari.findOne({ _id: id } as any);
+
+    if (findQari) {
+      if (add) {
+        findQari.uploaded += amount;
+      } else {
+        findQari.uploaded = amount;
+      }
+
+      await findQari.save();
+    }
   }
 }
 
