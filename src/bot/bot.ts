@@ -1,5 +1,11 @@
 import { Bot } from "grammy";
-import { help, qari, start as startCommand, sura } from "./commands/user.js";
+import {
+  help,
+  qari,
+  randomQirat,
+  start as startCommand,
+  sura,
+} from "./commands/user.js";
 import {
   addAdmin,
   currentUpload,
@@ -38,6 +44,7 @@ export function createBot(token: string, env: EnvGeneral | Env) {
 
   bot.command("qari", qari);
   bot.command("sura", sura);
+  bot.command("random", randomQirat);
 
   bot.command("help", help);
 

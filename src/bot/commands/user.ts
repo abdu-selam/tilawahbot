@@ -1,10 +1,11 @@
 import { InlineKeyboard, type CommandContext, type Context } from "grammy";
-import { User } from "../../models/models.js";
+import { Recite, User } from "../../models/models.js";
 import {
   chooseQari,
   chooseSura,
   choseQariForSura,
   helpMessage,
+  recitationCaption,
   startHtml,
 } from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
@@ -135,4 +136,49 @@ export const sura = async (ctx: CommandContext<Context>) => {
       reply_markup: keyboard,
     });
   }
+};
+
+export const randomQirat = async (ctx: CommandContext<Context>) => {
+  const qari = QariClass.findRandom();
+  const sura = SuraClass.findRandom();
+
+  if (!qari) {
+    await ctx.reply("404: Recite is not found");
+    return;
+  }
+  
+  const recite = await Recite.findOne({
+    qari: qari.id,
+    sura: sura.id,
+  } as any).lean();
+
+  if (!recite) {
+    await ctx.reply("404: Recite is not found");
+    return;
+  }
+
+  const html = recitationCaption({
+    qari,
+    surah: sura,
+    recitation: {
+      fileSize: recite.fileSize!,
+      duration: recite.duration!,
+    },
+  });
+
+  const keyboard = new InlineKeyboard()
+    .text("Qari", "select_qari")
+    .text("Sura", "select_sura");
+
+  await ctx.editMessageMedia(
+    {
+      type: "audio",
+      media: recite.audio,
+      caption: html,
+      parse_mode: "HTML",
+    },
+    {
+      reply_markup: keyboard,
+    },
+  );
 };

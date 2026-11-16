@@ -1,4 +1,5 @@
 import { Qari } from "../models/models.js";
+import { randomNum } from "../utils/formatter.js";
 
 export type QariType = {
   id: string;
@@ -45,6 +46,16 @@ class QariClass {
     const qaris = structuredClone(needed.slice(start, end));
 
     return { qaris, total: needed.length };
+  }
+
+  static findRandom(): QariType {
+    const needed = this.allQari.filter((qari) => qari.uploaded === 114);
+    const random = randomNum(0, needed.length - 1);
+
+    const qari = needed[random]!;
+    console.log(needed)
+
+    return qari;
   }
 
   static async add(

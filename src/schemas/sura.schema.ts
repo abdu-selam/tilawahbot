@@ -1,4 +1,5 @@
 import { Sura } from "../models/models.js";
+import { randomNum } from "../utils/formatter.js";
 
 export type SuraType = {
   id: string;
@@ -86,6 +87,13 @@ class SuraClass {
   static findById(id: string): SuraType | null {
     const sura = this.allSura.find((sura) => sura.id == id);
     if (!sura) return null;
+
+    return sura;
+  }
+
+  static findRandom(): SuraType {
+    const suraNum = randomNum(1, 114);
+    const sura = this.findOne(suraNum)!;
 
     return sura;
   }
