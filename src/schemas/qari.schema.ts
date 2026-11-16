@@ -41,9 +41,10 @@ class QariClass {
     }
     const start = page * 10;
     const end = start + 10;
-    const qaris = structuredClone(this.allQari.slice(start, end));
+    const needed = this.allQari.filter((qari) => qari.uploaded === 114);
+    const qaris = structuredClone(needed.slice(start, end));
 
-    return { qaris, total: this.length };
+    return { qaris, total: needed.length };
   }
 
   static async add(
