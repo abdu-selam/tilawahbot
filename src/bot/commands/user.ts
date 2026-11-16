@@ -1,6 +1,11 @@
 import { InlineKeyboard, type CommandContext, type Context } from "grammy";
 import { User } from "../../models/models.js";
-import { chooseQari, chooseSura, startHtml } from "../templates/start.js";
+import {
+  chooseQari,
+  chooseSura,
+  choseQariForSura,
+  startHtml,
+} from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { startUploadFromExist } from "./admin.js";
 import QariClass from "../../schemas/qari.schema.js";
@@ -9,6 +14,8 @@ import {
   generateSuraKeyboard,
 } from "../services/button.service.js";
 import type { Env, EnvGeneral } from "../../types/bot.types.js";
+import { isSura } from "../../utils/formatter.js";
+import SuraClass from "../../schemas/sura.schema.js";
 
 export const start = async (
   ctx: CommandContext<Context>,
@@ -92,5 +99,28 @@ export const sura = async (ctx: CommandContext<Context>) => {
       reply_markup: keyboard,
     });
     return;
+  }
+
+  if (isSura(payload.trim())) {
+    // show the sura that
+    const suraNum = Number(payload.trim());
+
+    const sura = SuraClass.findOne(suraNum)!;
+
+    const { qaris, total } = QariClass.find({});
+    const keyboard = generateQariKeyboard(
+      qaris,
+      `next_qarisura:1-${sura.id}`,
+      `back_qarisura:-1-${sura.id}`,
+      (qari) => `suraqari:${sura.id}-${qari.id}`,
+      total,
+    );
+
+    const html = choseQariForSura({ ...sura });
+
+    await ctx.reply(html, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    });
   }
 };

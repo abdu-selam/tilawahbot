@@ -65,8 +65,8 @@ export const formatDuration = (second: number): string => {
     return `${minuteInt} minute${minute > 1 ? "s" : ""} and ${seconds} seconds`;
   }
 
-  const hourInt = Math.floor(hour)
-  const minutes = Math.floor(minute - hourInt * 60)
+  const hourInt = Math.floor(hour);
+  const minutes = Math.floor(minute - hourInt * 60);
   let hourStr = `${hourInt} hour${hourInt > 1 ? "s" : ""} `;
 
   if (minutes > 0) {
@@ -75,4 +75,12 @@ export const formatDuration = (second: number): string => {
   }
 
   return hourStr;
+};
+
+export const isSura = (input: any): boolean => {
+  const sura = Number(input);
+
+  return (
+    !Number.isNaN(sura) && sura > 0 && sura < 115 && Number.isInteger(sura)
+  );
 };
