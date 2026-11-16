@@ -17,15 +17,18 @@ import {
   generateSuraKeyboard,
 } from "../services/button.service.js";
 import { Recite } from "../../models/models.js";
+import { answerCallback } from "../middlewares/button.middleware.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
-  await ctx.answerCallbackQuery();
+  await answerCallback(ctx);
 
-  const { qaris } = QariClass.find({});
+  const { qaris, total } = QariClass.find({});
   const keyboard = generateQariKeyboard(
     qaris,
     `next_qari:${1}`,
     `back_qari:${-1}`,
+    (qari) => `qari:${qari.id}`,
+    total,
   );
 
   await ctx.reply(chooseQari, {
@@ -35,14 +38,12 @@ export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
 };
 
 export const selectSurah = async (ctx: CallbackQueryContext<Context>) => {
-  await ctx.answerCallbackQuery();
+  await answerCallback(ctx);
 
   const keyboard = generateSuraKeyboard(
-    ctx,
     (sura) => `sura:${sura.id}`,
     "next_sura:1",
     "back_sura:-1",
-    "full_sura",
   );
 
   if (!keyboard) {
@@ -67,19 +68,18 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  await ctx.answerCallbackQuery();
-  if (ctx.chat?.id && ctx.msg?.message_id) {
-    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }
+  await answerCallback(ctx);
 
   const keyboard = generateQariKeyboard(
     qaris,
     `next_qari:${page + 1}`,
     `back_qari:${page - 1}`,
+    (qari) => `qari:${qari.id}`,
+    total,
+    page,
   );
 
-  await ctx.reply(chooseQari, {
-    parse_mode: "HTML",
+  await ctx.editMessageReplyMarkup({
     reply_markup: keyboard,
   });
 };
@@ -87,11 +87,9 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
 export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(ctx.match[1]);
   const keyboard = generateSuraKeyboard(
-    ctx,
     (sura) => `sura:${sura.id}`,
     `next_sura:${page + 1}`,
     `back_sura:${page - 1}`,
-    "full_sura",
     page,
   );
 
@@ -103,13 +101,8 @@ export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  await ctx.answerCallbackQuery();
-  if (ctx.chat?.id && ctx.msg?.message_id) {
-    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }
-
-  await ctx.reply(chooseQari, {
-    parse_mode: "HTML",
+  await answerCallback(ctx);
+  await ctx.editMessageReplyMarkup({
     reply_markup: keyboard,
   });
 };
@@ -120,22 +113,20 @@ export const selectSurahForQari = async (
   const qariId = ctx.match[1];
 
   if (!qariId) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
 
   const qari = QariClass.findOne(qariId);
   if (!qari) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
 
   const keyboard = generateSuraKeyboard(
-    ctx,
     (sura) => `suraqari:${sura.id}-${qari.id}`,
-    `next_suraqari:0-${qari.id}`,
+    `next_suraqari:1-${qari.id}`,
     `back_suraqari:-1-${qari.id}`,
-    `full_sura:${qari.id}`,
   );
 
   if (!keyboard) {
@@ -146,17 +137,20 @@ export const selectSurahForQari = async (
     return;
   }
 
-  await ctx.answerCallbackQuery();
-  if (ctx.chat?.id && ctx.msg?.message_id) {
-    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }
-
   const html = choseSuraForQari(qari.name, qari.nameAr);
-  await ctx.replyWithPhoto(qari.image, {
-    caption: html,
-    parse_mode: "HTML",
-    reply_markup: keyboard,
-  });
+
+  await answerCallback(ctx);
+  await ctx.editMessageMedia(
+    {
+      type: "photo",
+      media: qari.image,
+      caption: html,
+      parse_mode: "HTML",
+    },
+    {
+      reply_markup: keyboard,
+    },
+  );
 };
 
 export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
@@ -180,16 +174,14 @@ export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(parse[0]);
   const qari = QariClass.findOne(parse.at(-1)!);
   if (!qari) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
 
   const keyboard = generateSuraKeyboard(
-    ctx,
     (sura) => `suraqari:${sura.id}-${qari.id}`,
     `next_suraqari:${page + 1}-${qari.id}`,
     `back_suraqari:${page - 1}-${qari.id}`,
-    `full_sura:${qari.id}`,
     page,
   );
 
@@ -201,15 +193,8 @@ export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  await ctx.answerCallbackQuery();
-  if (ctx.chat?.id && ctx.msg?.message_id) {
-    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
-  }
-
-  const html = choseSuraForQari(qari.name, qari.nameAr);
-  await ctx.replyWithPhoto(qari.image, {
-    caption: html,
-    parse_mode: "HTML",
+  await answerCallback(ctx);
+  await ctx.editMessageReplyMarkup({
     reply_markup: keyboard,
   });
 };
@@ -220,25 +205,28 @@ export const selectQarisForSura = async (
   const suraId = ctx.match[1];
 
   if (!suraId) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
   const sura = SuraClass.findById(suraId);
 
   if (!sura) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
 
-  const { qaris } = QariClass.find({});
+  const { qaris, total } = QariClass.find({});
   const keyboard = generateQariKeyboard(
     qaris,
     `next_qarisura:1-${sura.id}`,
     `back_qarisura:-1-${sura.id}`,
+    (qari) => `suraqari:${sura.id}-${qari.id}`,
+    total,
   );
 
   const html = choseQariForSura({ ...sura });
-  await ctx.reply(html, {
+
+  await ctx.editMessageText(html, {
     parse_mode: "HTML",
     reply_markup: keyboard,
   });
@@ -265,7 +253,7 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
   const page = Number(parse[0]);
   const sura = SuraClass.findById(parse.at(-1)!);
   if (!sura) {
-    await ctx.answerCallbackQuery();
+    await answerCallback(ctx);
     return;
   }
 
@@ -278,7 +266,7 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  await ctx.answerCallbackQuery();
+  await answerCallback(ctx);
   if (ctx.chat?.id && ctx.msg?.message_id) {
     await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.message_id);
   }
@@ -287,10 +275,14 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
     qaris,
     `next_qarisura:${page + 1}-${sura.id}`,
     `back_qarisura:${page - 1}-${sura.id}`,
+    (qari) => `suraqari:${sura.id}-${qari.id}`,
+    total,
+    page,
   );
 
   const html = choseQariForSura({ ...sura });
-  await ctx.reply(html, {
+
+  await ctx.editMessageText(html, {
     parse_mode: "HTML",
     reply_markup: keyboard,
   });
@@ -320,7 +312,7 @@ export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
     return;
   }
 
-  await ctx.answerCallbackQuery();
+  await answerCallback(ctx);
 
   const qari = QariClass.findOne(qariId)!;
   const surah = SuraClass.findById(suraId)!;
@@ -338,9 +330,15 @@ export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
     .text("Qari", "select_qari")
     .text("Sura", "select_sura");
 
-  await ctx.replyWithAudio(recite.audio!, {
-    caption: html,
-    parse_mode: "HTML",
-    reply_markup: keyboard,
-  });
+  await ctx.editMessageMedia(
+    {
+      type: "audio",
+      media: recite.audio,
+      caption: html,
+      parse_mode: "HTML",
+    },
+    {
+      reply_markup: keyboard,
+    },
+  );
 };
