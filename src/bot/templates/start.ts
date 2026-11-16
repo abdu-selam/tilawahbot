@@ -125,3 +125,33 @@ export const recitationCaption = ({
 اللَّهُمَّ اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا
   `.trim();
 };
+
+export const helpMessage = `
+<b>Tilawah Bot — Help Center</b>
+
+<blockquote>Welcome to <b>Tilawah</b>! Your companion for listening to beautiful Quran recitations.</blockquote>
+
+<b>Available Commands</b>
+
+/start - Start the bot
+/help - Show this help message
+/qari - Browse available Qaris
+/random - Get a random Quran recitation
+
+<b>How to Use</b>
+
+1. Use /qari or click <b>Qari</b> to browse available reciters.
+2. Select your favorite Qari.
+3. Choose a Surah to listen to.
+4. Enjoy listening to the Holy Quran.
+
+<b><i>OR</i></b>
+
+1. Use /sura or click <b>Sura</b> to browse available Surahs.
+2. Select your needed Surah.
+3. Choose a Qari to listen to.
+4. Enjoy listening to the Holy Quran.
+
+<i>May Allah make the Quran the light of our hearts. 🤍</i>
+`;
+

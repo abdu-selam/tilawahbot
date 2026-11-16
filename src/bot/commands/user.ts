@@ -4,6 +4,7 @@ import {
   chooseQari,
   chooseSura,
   choseQariForSura,
+  helpMessage,
   startHtml,
 } from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
@@ -56,6 +57,17 @@ export const start = async (
     .text("Sura", "select_sura");
 
   await ctx.reply(startHtml, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+export const help = async (ctx: CommandContext<Context>) => {
+  const keyboard = new InlineKeyboard()
+    .text("Qari", "select_qari")
+    .text("Sura", "select_sura");
+
+  await ctx.reply(helpMessage, {
     parse_mode: "HTML",
     reply_markup: keyboard,
   });
