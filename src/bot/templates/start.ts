@@ -136,6 +136,7 @@ export const helpMessage = `
 /start - Start the bot
 /help - Show this help message
 /qari - Browse available Qaris
+/sura - Browse all Surahs
 /random - Get a random Quran recitation
 
 <b>How to Use</b>

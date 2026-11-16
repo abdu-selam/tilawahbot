@@ -18,7 +18,7 @@ class QariClass {
   static current: number = 1;
 
   static async fill() {
-    const allQari = await Qari.find();
+    const allQari = await Qari.find().sort({ name: 1 });
 
     const qaris = allQari.map((qari) => ({
       id: qari.id,
