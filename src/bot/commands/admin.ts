@@ -98,7 +98,7 @@ export const listAllQari = async (
   const format = qaris
     .map((qari) => {
       if (qari.uploaded === 114) {
-        return `<blockquote>${qari.name}: Upload completed</blockquote>`;
+        return `<blockquote>${qari.name}: Upload completed</blockquote>\n`;
       }
       return `<a href="https://t.me/${env.bot}?start=upload_${qari.id}">${qari.name}: total uploaded ${qari.uploaded}</a>\n`;
     })

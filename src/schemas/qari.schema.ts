@@ -124,6 +124,14 @@ class QariClass {
         findQari.uploaded = amount;
       }
 
+      this.allQari = this.allQari.map((qari) => {
+        if (qari.id == id) {
+          qari.uploaded = findQari.uploaded;
+        }
+
+        return qari;
+      });
+
       await findQari.save();
     }
   }
