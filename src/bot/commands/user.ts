@@ -146,7 +146,7 @@ export const randomQirat = async (ctx: CommandContext<Context>) => {
     await ctx.reply("404: Recite is not found");
     return;
   }
-  
+
   const recite = await Recite.findOne({
     qari: qari.id,
     sura: sura.id,
@@ -169,16 +169,10 @@ export const randomQirat = async (ctx: CommandContext<Context>) => {
   const keyboard = new InlineKeyboard()
     .text("Qari", "select_qari")
     .text("Sura", "select_sura");
-
-  await ctx.editMessageMedia(
-    {
-      type: "audio",
-      media: recite.audio,
-      caption: html,
-      parse_mode: "HTML",
-    },
-    {
-      reply_markup: keyboard,
-    },
-  );
+    
+  await ctx.replyWithAudio(recite.audio, {
+    caption: html,
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
 };

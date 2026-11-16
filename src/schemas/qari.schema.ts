@@ -53,7 +53,6 @@ class QariClass {
     const random = randomNum(0, needed.length - 1);
 
     const qari = needed[random]!;
-    console.log(needed)
 
     return qari;
   }
