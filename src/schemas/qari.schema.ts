@@ -76,6 +76,8 @@ class QariClass {
       image,
     });
 
+    this.length += 1;
+
     return {
       id: qari.id,
       name: qari.nameEn,

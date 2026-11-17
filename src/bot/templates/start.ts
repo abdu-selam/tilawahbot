@@ -1,4 +1,5 @@
 import type { QariType } from "../../schemas/qari.schema.js";
+import QariClass from "../../schemas/qari.schema.js";
 import type { SuraType } from "../../schemas/sura.schema.js";
 import { formatDuration, formatFileSize } from "../../utils/formatter.js";
 
@@ -34,7 +35,7 @@ May Allah accept your listening, recitation, and remembrance of Him.
 <b>May the Quran always be your companion.</b>
 `;
 
-export const chooseQari = `<blockquote>Choose Your Qari</blockquote>
+export const chooseQari = `<blockquote>Choose Your Qari (Total: ${QariClass.length} Qaris)</blockquote>
 
 Listen to beautiful Quran recitations from different Qaris.
 
@@ -78,7 +79,7 @@ export const choseQariForSura = ({
   revelation: string;
 }) => {
   return `
-<blockquote>Choose a Qari</blockquote>
+<blockquote>Choose a Qari (Total: ${QariClass.length} Qaris)</blockquote>
 
 ${nameEn} | <b>${nameAr}</b>
 
@@ -167,5 +168,4 @@ Message added! add keyboards with this structure
   }
 ]
 </code></pre>
-`
-
+`;

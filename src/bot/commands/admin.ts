@@ -280,8 +280,6 @@ export const postAnnouncement = async (ctx: CommandContext<Context>) => {
     chunks.push(users.slice(i, i + 20));
   }
 
-  console.log(chunks);
-
   let i = 0;
   const interval = setInterval(async () => {
     if (i >= chunks.length) {
@@ -289,14 +287,14 @@ export const postAnnouncement = async (ctx: CommandContext<Context>) => {
       return;
     }
 
+    const currChunk = chunks[i];
     i++;
+    
+    if (!currChunk) {
+      return;
+    }
 
     if (announce.image) {
-      const currChunk = chunks[i];
-      if (!currChunk) {
-        return;
-      }
-
       await Promise.all(
         currChunk.map((user) => {
           return ctx.api.sendPhoto(user.uid, announce.image, {
@@ -306,11 +304,6 @@ export const postAnnouncement = async (ctx: CommandContext<Context>) => {
           });
         }),
       );
-      return;
-    }
-
-    const currChunk = chunks[i];
-    if (!currChunk) {
       return;
     }
 
