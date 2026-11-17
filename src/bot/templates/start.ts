@@ -35,7 +35,7 @@ May Allah accept your listening, recitation, and remembrance of Him.
 <b>May the Quran always be your companion.</b>
 `;
 
-export const chooseQari = `<blockquote>Choose Your Qari (Total: ${QariClass.length} Qaris)</blockquote>
+export const chooseQari = `<blockquote>Choose Your Qari (Total: ${QariClass.avalableQaris()} Qaris)</blockquote>
 
 Listen to beautiful Quran recitations from different Qaris.
 
@@ -79,7 +79,7 @@ export const choseQariForSura = ({
   revelation: string;
 }) => {
   return `
-<blockquote>Choose a Qari (Total: ${QariClass.length} Qaris)</blockquote>
+<blockquote>Choose a Qari (Total: ${QariClass.avalableQaris()} Qaris)</blockquote>
 
 ${nameEn} | <b>${nameAr}</b>
 

@@ -148,6 +148,11 @@ class QariClass {
       await findQari.save();
     }
   }
+
+  static avalableQaris() {
+    const needed = this.allQari.filter((qari) => qari.uploaded === 114);
+    return needed.length;
+  }
 }
 
 export default QariClass;
