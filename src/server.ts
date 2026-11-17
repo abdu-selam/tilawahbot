@@ -12,7 +12,7 @@ const start = async () => {
   await seed();
 
   bot.start();
-  app.listen(env.port, () => {
+  app.listen(Number(env.port), "0.0.0.0", () => {
     console.log("Server is runnig");
   });
 };

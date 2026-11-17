@@ -156,3 +156,16 @@ export const helpMessage = `
 <i>May Allah make the Quran the light of our hearts. 🤍</i>
 `;
 
+export const addKeyboardText = `
+Message added! add keyboards with this structure
+<pre><code class="language-json">
+[
+  {
+    "text": "text in the button",
+    "data": "the data the keybord poses",
+    "type": "text | url"
+  }
+]
+</code></pre>
+`
+

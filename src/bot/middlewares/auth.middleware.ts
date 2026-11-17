@@ -1,9 +1,9 @@
 import type { CommandContext, Context } from "grammy";
 import { User } from "../../models/models.js";
-import type { CtxWithPicture } from "../../types/bot.types.js";
+import type { CtxForMessage, CtxWithPicture } from "../../types/bot.types.js";
 
 export const checkAdmin = async (
-  ctx: CommandContext<Context> | CtxWithPicture,
+  ctx: CommandContext<Context> | CtxWithPicture | CtxForMessage,
 ): Promise<boolean> => {
   const message = ctx.msg;
   const sender = message.from;

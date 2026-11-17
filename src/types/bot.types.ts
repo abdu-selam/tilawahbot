@@ -4,6 +4,8 @@ export type CtxWithPicture = Filter<Context, "message:photo">;
 
 export type CtxForChnnelMessage = Filter<Context, "channel_post">;
 
+export type CtxForMessage = Filter<Context, "message">;
+
 export interface EnvGeneral {
   token: string;
   mongo: string;

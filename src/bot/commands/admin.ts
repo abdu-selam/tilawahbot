@@ -1,9 +1,16 @@
-import { type CommandContext, type Context } from "grammy";
+import { InlineKeyboard, type CommandContext, type Context } from "grammy";
 import QariClass from "../../schemas/qari.schema.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
-import { formatMessage } from "../../utils/formatter.js";
-import type { CtxWithPicture, Env, EnvGeneral } from "../../types/bot.types.js";
+import { formatKeybord, formatMessage } from "../../utils/formatter.js";
+import type {
+  CtxForMessage,
+  CtxWithPicture,
+  Env,
+  EnvGeneral,
+} from "../../types/bot.types.js";
 import { Recite, User } from "../../models/models.js";
+import Announce from "../../schemas/announce.schema.js";
+import { addKeyboardText } from "../templates/start.js";
 
 export const addAdmin = async (ctx: CommandContext<Context>) => {
   const isAdmin = await checkAdmin(ctx);
@@ -55,6 +62,11 @@ export const startUpload = async (
 
   const message = ctx.msg;
   if (!message.caption) {
+    if (Announce.status === "image") {
+      Announce.addImage(message.photo.at(-1)!.file_id);
+      await ctx.reply("Image saved please type your message!");
+      return;
+    }
     await ctx.reply("Please give valid message");
     return;
   }
@@ -151,4 +163,164 @@ export const currentUpload = async (ctx: CommandContext<Context>) => {
   }
 
   await ctx.reply(`Qari ${QariClass.qari?.name} upload has been started`);
+};
+
+export const announce = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+
+  Announce.start();
+
+  await ctx.reply("Announce started!");
+};
+
+export const announceMessage = async (ctx: CtxForMessage) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  if (!["message", "keyboard"].includes(Announce.status)) {
+    await ctx.reply("Announcment is not started");
+    return;
+  }
+
+  const message = ctx.msg.text;
+  if (!message) {
+    await ctx.reply("Please type valid message");
+    return;
+  }
+
+  if (Announce.status === "message") {
+    Announce.addMessage(message);
+    await ctx.reply(addKeyboardText, {
+      parse_mode: "HTML",
+    });
+    return;
+  }
+
+  const values = formatKeybord(message);
+
+  Announce.addKeyboard(values ?? []);
+  await ctx.reply(
+    "Keyboards added! announce with /post or check with /showanounce or /clearanounce for clearing anounce",
+  );
+};
+
+export const showAnnounce = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const announce = Announce.getMessage();
+
+  const keyboard = new InlineKeyboard();
+
+  announce.keybords.forEach(({ text, data, type }) => {
+    if (type === "url") {
+      keyboard.url(text, data);
+    } else {
+      keyboard.text(text, data);
+    }
+  });
+
+  if (!announce.text) {
+    await ctx.reply("There is no announcement");
+    return;
+  }
+
+  if (announce.image) {
+    await ctx.replyWithPhoto(announce.image, {
+      caption: announce.text,
+      reply_markup: keyboard,
+      parse_mode: "HTML",
+    });
+
+    return;
+  }
+
+  await ctx.reply(announce.text, {
+    parse_mode: "HTML",
+    reply_markup: keyboard,
+  });
+};
+
+export const clearAnnounce = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  Announce.clear();
+  await ctx.reply("Announcement has been cleared");
+};
+
+export const postAnnouncement = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const announce = Announce.getMessage();
+
+  const keyboard = new InlineKeyboard();
+
+  announce.keybords.forEach(({ text, data, type }) => {
+    if (type === "url") {
+      keyboard.url(text, data);
+    } else {
+      keyboard.text(text, data);
+    }
+  });
+
+  if (!announce.text) {
+    await ctx.reply("There is no announcement");
+    return;
+  }
+
+  const users = await User.find({ utype: "user" } as any).lean();
+
+  const chunks: any[][] = [];
+
+  for (let i = 0; i < users.length; i += 20) {
+    chunks.push(users.slice(i, i + 20));
+  }
+
+  console.log(chunks);
+
+  let i = 0;
+  const interval = setInterval(async () => {
+    if (i >= chunks.length) {
+      clearInterval(interval);
+      return;
+    }
+
+    i++;
+
+    if (announce.image) {
+      const currChunk = chunks[i];
+      if (!currChunk) {
+        return;
+      }
+
+      await Promise.all(
+        currChunk.map((user) => {
+          return ctx.api.sendPhoto(user.uid, announce.image, {
+            caption: announce.text,
+            reply_markup: keyboard,
+            parse_mode: "HTML",
+          });
+        }),
+      );
+      return;
+    }
+
+    const currChunk = chunks[i];
+    if (!currChunk) {
+      return;
+    }
+
+    await Promise.all(
+      currChunk.map((user) => {
+        return ctx.api.sendMessage(user.uid, announce.text, {
+          parse_mode: "HTML",
+          reply_markup: keyboard,
+        });
+      }),
+    );
+  }, 1000);
 };

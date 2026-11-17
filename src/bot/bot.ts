@@ -8,8 +8,13 @@ import {
 } from "./commands/user.js";
 import {
   addAdmin,
+  announce,
+  announceMessage,
+  clearAnnounce,
   currentUpload,
   listAllQari,
+  postAnnouncement,
+  showAnnounce,
   startUpload,
   stopUpload,
 } from "./commands/admin.js";
@@ -48,9 +53,16 @@ export function createBot(token: string, env: EnvGeneral | Env) {
 
   bot.command("help", help);
 
+  bot.command("anounce", announce);
+  bot.command("showanounce", showAnnounce);
+  bot.command("clearanounce", clearAnnounce);
+  bot.command("post", postAnnouncement);
+
   bot.on("message:photo", (ctx) => {
     startUpload(ctx, env);
   });
+
+  bot.on("message", announceMessage);
 
   bot.on("channel_post", async (ctx) => {
     const channel = ctx.chat;

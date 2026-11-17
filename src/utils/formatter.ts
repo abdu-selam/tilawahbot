@@ -1,3 +1,5 @@
+import type { Keyboard } from "../schemas/announce.schema.js";
+
 type FormatedMessage = {
   nameEn: string;
   nameAr: string;
@@ -87,4 +89,34 @@ export const isSura = (input: any): boolean => {
 
 export const randomNum = (start: number, end: number): number => {
   return Math.floor(Math.random() * (end - start + 1)) + start;
+};
+
+export const formatKeybord = (message: string): Keyboard[] | null => {
+  try {
+    const data = JSON.parse(message.trim());
+    const valids = data
+      .filter((each: Record<string, string>) => {
+        if (!isObject(each)) {
+          return false;
+        }
+        return each.text && each.data && each.type;
+      })
+      .map((each: Keyboard): Keyboard => {
+        return {
+          text: each.text,
+          data: each.data,
+          type: ["text", "url"].includes(each.type.trim())
+            ? each.type.trim()
+            : "text",
+        };
+      });
+
+    return valids;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const isObject = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 };
