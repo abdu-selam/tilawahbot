@@ -115,7 +115,6 @@ export const sura = async (ctx: CommandContext<Context>) => {
   }
 
   if (isSura(payload.trim())) {
-    // show the sura that
     const suraNum = Number(payload.trim());
 
     const sura = SuraClass.findOne(suraNum)!;

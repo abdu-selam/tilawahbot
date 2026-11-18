@@ -10,7 +10,7 @@ import type {
 } from "../../types/bot.types.js";
 import { Recite, User } from "../../models/models.js";
 import Announce from "../../schemas/announce.schema.js";
-import { addKeyboardText } from "../templates/start.js";
+import { addKeyboardText, userData } from "../templates/start.js";
 
 export const addAdmin = async (ctx: CommandContext<Context>) => {
   const isAdmin = await checkAdmin(ctx);
@@ -322,9 +322,30 @@ export const totalUsers = async (ctx: CommandContext<Context>) => {
   const isAdmin = await checkAdmin(ctx);
 
   if (!isAdmin) return;
+  const payload = ctx.match.trim();
+  if (payload) {
+    await getUserByUsername(ctx, payload);
+    return;
+  }
   const total = await User.countDocuments();
 
   await ctx.reply(`Total users of the bot: <b>${total}</b>`, {
+    parse_mode: "HTML",
+  });
+};
+
+export const getUserByUsername = async (
+  ctx: CommandContext<Context>,
+  payload: string,
+) => {
+  const user = await User.findOne({ username: payload.trim() } as any).lean();
+
+  let response = `User Not Found with <a href="https://t.me/${payload.trim()}">${payload.trim()}</a>`;
+  if (user) {
+    response = userData(user);
+  }
+
+  await ctx.reply(response, {
     parse_mode: "HTML",
   });
 };

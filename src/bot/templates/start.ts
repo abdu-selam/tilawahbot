@@ -169,3 +169,15 @@ Message added! add keyboards with this structure
 ]
 </code></pre>
 `;
+
+export const userData = (user: Record<string, string | number>) => {
+  return `
+<blockquote>User found</blockquote>
+
+<pre><code class="language-json">
+${JSON.stringify(user, null, 2)}
+</code></pre>
+
+<a href="https://t.me/${user.username}">${user.username} is here</a>
+`.trim();
+};
