@@ -86,7 +86,8 @@ export const qari = async (ctx: CommandContext<Context>) => {
       total,
     );
 
-    await ctx.reply(chooseQari, {
+    const html = chooseQari()
+    await ctx.reply(html, {
       parse_mode: "HTML",
       reply_markup: keyboard,
     });

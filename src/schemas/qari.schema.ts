@@ -168,7 +168,7 @@ class QariClass {
   }
 
   static avalableQaris() {
-    const needed = this.allQari.filter((qari) => qari.uploaded === 114);
+    const needed = this.allQari.filter((qari) => qari.uploaded >= 114);
     return needed.length;
   }
 }
