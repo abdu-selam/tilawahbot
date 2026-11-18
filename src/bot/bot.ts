@@ -17,6 +17,7 @@ import {
   showAnnounce,
   startUpload,
   stopUpload,
+  totalUsers,
 } from "./commands/admin.js";
 import { uploadQurans } from "./commands/channel.js";
 import {
@@ -57,6 +58,8 @@ export function createBot(token: string, env: EnvGeneral | Env) {
   bot.command("showanounce", showAnnounce);
   bot.command("clearanounce", clearAnnounce);
   bot.command("post", postAnnouncement);
+
+  bot.command("users", totalUsers);
 
   bot.on("message:photo", (ctx) => {
     startUpload(ctx, env);

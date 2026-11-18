@@ -289,7 +289,7 @@ export const postAnnouncement = async (ctx: CommandContext<Context>) => {
 
     const currChunk = chunks[i];
     i++;
-    
+
     if (!currChunk) {
       return;
     }
@@ -316,4 +316,15 @@ export const postAnnouncement = async (ctx: CommandContext<Context>) => {
       }),
     );
   }, 1000);
+};
+
+export const totalUsers = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const total = await User.countDocuments();
+
+  await ctx.reply(`Total users of the bot: <b>${total}</b>`, {
+    parse_mode: "HTML",
+  });
 };

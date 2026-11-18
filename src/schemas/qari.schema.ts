@@ -6,7 +6,7 @@ export type QariType = {
   name: string;
   nameAr: string;
   image: string;
-  uploaded?: number;
+  uploaded: number;
 };
 
 class QariClass {
@@ -62,18 +62,26 @@ class QariClass {
     nameAr: string,
     image: string,
   ): Promise<QariType> {
-    const qari = new Qari({
-      nameEn: name,
-      nameAr,
+    const findQari = this.findByName(name);
+    if (findQari) {
+      return findQari;
+    }
+
+    const values = {
+      nameEn: name.trim(),
+      nameAr: nameAr.trim(),
       image,
-    });
+    };
+
+    const qari = new Qari(values);
 
     await qari.save();
     this.allQari.push({
-      name,
-      nameAr,
+      name: values.nameEn,
+      nameAr: values.nameAr,
       id: qari.id,
       image,
+      uploaded: 0,
     });
 
     this.length += 1;
@@ -83,11 +91,21 @@ class QariClass {
       name: qari.nameEn,
       nameAr: qari.nameAr,
       image,
+      uploaded: qari.uploaded,
     };
   }
 
   static findOne(id: string): QariType | null {
     const qari = this.allQari.find((qari) => qari.id == id);
+    if (!qari) return null;
+
+    return qari;
+  }
+
+  static findByName(name: string): QariType | null {
+    const qari = this.allQari.find(
+      (qari) => qari.name.toLowerCase() == name.trim().toLowerCase(),
+    );
     if (!qari) return null;
 
     return qari;
