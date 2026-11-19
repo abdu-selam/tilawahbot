@@ -1,7 +1,8 @@
 import type { QariType } from "../../schemas/qari.schema.js";
 import QariClass from "../../schemas/qari.schema.js";
 import type { SuraType } from "../../schemas/sura.schema.js";
-import { formatDuration, formatFileSize } from "../../utils/formatter.js";
+import type { ParsedError } from "../../types/bot.types.js";
+import { escapeHtml, formatDuration, formatFileSize } from "../../utils/formatter.js";
 
 type RecitationType = {
   fileSize: number;
@@ -172,7 +173,7 @@ Message added! add keyboards with this structure
 </code></pre>
 `;
 
-export const userData = (user: Record<string, string | number>) => {
+export const userData = (user: Record<string, string | number>): string => {
   return `
 <blockquote>User found</blockquote>
 
@@ -182,4 +183,22 @@ ${JSON.stringify(user, null, 2)}
 
 <a href="https://t.me/${user.username}">${user.username} is here</a>
 `.trim();
+};
+
+export const errorHtml = (err: ParsedError, id: string | number | undefined): string => {
+  return `
+<blockquote>BOT ERROR</blockquote>
+
+<b>Type:</b> ${escapeHtml(err.name)}
+<b>Message:</b> ${escapeHtml(err.message)}
+
+<b>File:</b> <code>${escapeHtml(err.file)}</code>
+<b>Line:</b> <code>${err.line ?? "Unknown"}</code>
+<b>Column:</b> <code>${err.column ?? "Unknown"}</code>
+
+<b>User ID:</b> <code>${id ?? "Unknown"}</code>
+
+<b>Stack Trace:</b>
+<pre>${escapeHtml(err.stack.slice(0, 2500))}</pre>
+ `.trim()
 };

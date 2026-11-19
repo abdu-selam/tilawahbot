@@ -31,3 +31,12 @@ export interface Env {
 
   MONGODB: DurableObjectNamespace;
 }
+
+export interface ParsedError {
+  name: string;
+  message: string;
+  file: string;
+  line: number | null;
+  column: number | null;
+  stack: string;
+}

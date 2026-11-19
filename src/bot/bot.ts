@@ -32,6 +32,8 @@ import {
   sendQuranAudio,
 } from "./commands/buttons.js";
 import type { Env, EnvGeneral } from "../types/bot.types.js";
+import { errorHtml } from "./templates/start.js";
+import { escapeHtml, parseError } from "../utils/formatter.js";
 
 export function createBot(token: string, env: EnvGeneral | Env) {
   const bot = new Bot(token);
@@ -98,7 +100,20 @@ export function createBot(token: string, env: EnvGeneral | Env) {
   });
 
   bot.catch((err) => {
-    console.log(err.message);
+    try {
+      const ctx = err.ctx;
+
+      const parsed = parseError(err);
+
+      const html = errorHtml(parsed, ctx.from?.id);
+      ctx.api.sendMessage(env.admin, html, {
+        parse_mode: "HTML",
+      });
+    } catch (error) {
+      console.log("============================")
+      console.log(error)
+      console.log("############################")
+    }
   });
 
   return bot;

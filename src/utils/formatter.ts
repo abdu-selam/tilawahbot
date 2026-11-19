@@ -1,4 +1,5 @@
 import type { Keyboard } from "../schemas/announce.schema.js";
+import type { ParsedError } from "../types/bot.types.js";
 
 type FormatedMessage = {
   nameEn: string;
@@ -119,4 +120,35 @@ export const formatKeybord = (message: string): Keyboard[] | null => {
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+};
+
+export const parseError = (error: unknown): ParsedError => {
+  const err = error instanceof Error ? error : new Error(String(error));
+
+  const stack = err.stack ?? "";
+
+  const match = stack.match(/(?:\(|at\s+)(.*?):(\d+):(\d+)\)?/);
+
+  return {
+    name: err.name,
+    message: err.message,
+    file: match?.[1] ?? "Unknown",
+    line: match ? Number(match[2]) : null,
+    column: match ? Number(match[3]) : null,
+    stack,
+  };
+};
+
+export const escapeHtml = (text: string): string => {
+  return text.replace(
+    /[&<>"']/g,
+    (char) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[char]!,
+  );
 };
