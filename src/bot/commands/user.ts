@@ -257,3 +257,38 @@ export const reactOnMessage = async (ctx: CommandContext<Context>) => {
 
   await ctx.react("🔥");
 };
+
+export const replyForUserMessage = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const [messageId, text] = ctx.match.trim().split(";;");
+
+  if (!messageId || !text) {
+    await ctx.reply("Please provide valid format");
+    return;
+  }
+
+  if (!mongoose.isValidObjectId(messageId)) {
+    await ctx.reply("Please provide valid message id");
+    return;
+  }
+
+  const message = await Message.findOne({ _id: messageId } as any);
+
+  if (!message) {
+    await ctx.reply("Please provide valid message id");
+    return;
+  }
+
+  await ctx.api.sendMessage(message.chatId, text, {
+    parse_mode: "HTML",
+  });
+
+  message.reply = true;
+  message.replied = text;
+
+  await message.save();
+
+  await ctx.react("🔥");
+};

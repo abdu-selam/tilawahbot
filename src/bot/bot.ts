@@ -4,6 +4,7 @@ import {
   qari,
   randomQirat,
   reactOnMessage,
+  replyForUserMessage,
   sendMessage,
   start as startCommand,
   sura,
@@ -67,6 +68,7 @@ export function createBot(token: string, env: EnvGeneral | Env) {
   bot.command("message", sendMessage);
 
   bot.command("read", reactOnMessage);
+  bot.command("reply", replyForUserMessage);
 
   bot.on("message:photo", (ctx) => {
     startUpload(ctx, env);

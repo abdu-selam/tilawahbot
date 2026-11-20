@@ -259,6 +259,6 @@ ${message}
 
 <code>/read ${messageId}</code>
 
-<code>/reply ${messageId} your-message</code>
+<code>/reply ${messageId};;your-message</code>
 `.trim();
 };
