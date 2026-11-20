@@ -3,6 +3,7 @@ import {
   help,
   qari,
   randomQirat,
+  sendMessage,
   start as startCommand,
   sura,
 } from "./commands/user.js";
@@ -62,6 +63,7 @@ export function createBot(token: string, env: EnvGeneral | Env) {
   bot.command("post", postAnnouncement);
 
   bot.command("users", totalUsers);
+  bot.command("message", sendMessage);
 
   bot.on("message:photo", (ctx) => {
     startUpload(ctx, env);
@@ -110,9 +112,9 @@ export function createBot(token: string, env: EnvGeneral | Env) {
         parse_mode: "HTML",
       });
     } catch (error) {
-      console.log("============================")
-      console.log(error)
-      console.log("############################")
+      console.log("============================");
+      console.log(error);
+      console.log("############################");
     }
   });
 

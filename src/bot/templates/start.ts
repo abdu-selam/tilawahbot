@@ -231,3 +231,33 @@ May Allah accept your listening, recitation, and remembrance of Him.
 <blockquote>Don't forget the developer on your prayer!</blockquote>
 `.trim();
 };
+
+export const replyForCleanMessege = (name: string | undefined) => {
+  return `
+<b>السلام عليكم ورحمة الله وبركاته</b>
+
+${name ?? ""} please provide your message as the following:
+<pre>
+/message type your message here
+</pre>
+`.trim();
+};
+
+export const tellAdminIncommingMessage = (
+  uid: string | number,
+  message: string,
+) => {
+  return `
+<blockquote>Message Incomming</blockquote>
+
+<a href="tg://user?id=${Number(uid)}">${uid}</a>
+
+<pre>
+${message}
+</pre>
+
+/read ${uid} your-emoji
+
+/reply ${uid} your-message
+`.trim();
+};

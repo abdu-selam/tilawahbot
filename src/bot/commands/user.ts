@@ -1,12 +1,14 @@
 import { InlineKeyboard, type CommandContext, type Context } from "grammy";
-import { Recite, User } from "../../models/models.js";
+import { Message, Recite, User } from "../../models/models.js";
 import {
   chooseQari,
   chooseSura,
   choseQariForSura,
   helpMessage,
   recitationCaption,
+  replyForCleanMessege,
   startHtml,
+  tellAdminIncommingMessage,
 } from "../templates/start.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
 import { startUploadFromExist } from "./admin.js";
@@ -18,6 +20,7 @@ import {
 import type { Env, EnvGeneral } from "../../types/bot.types.js";
 import { isSura } from "../../utils/formatter.js";
 import SuraClass from "../../schemas/sura.schema.js";
+import env from "../../utils/env.js";
 
 export const start = async (
   ctx: CommandContext<Context>,
@@ -86,7 +89,7 @@ export const qari = async (ctx: CommandContext<Context>) => {
       total,
     );
 
-    const html = chooseQari()
+    const html = chooseQari();
     await ctx.reply(html, {
       parse_mode: "HTML",
       reply_markup: keyboard,
@@ -169,7 +172,7 @@ export const randomQirat = async (ctx: CommandContext<Context>) => {
   const keyboard = new InlineKeyboard()
     .text("Qari", "select_qari")
     .text("Sura", "select_sura");
-    
+
   await ctx.replyWithAudio(recite.audio, {
     caption: html,
     parse_mode: "HTML",
@@ -178,5 +181,33 @@ export const randomQirat = async (ctx: CommandContext<Context>) => {
 };
 
 export const sendMessage = async (ctx: CommandContext<Context>) => {
-  
-}
+  const payload = ctx.match;
+  const msg = ctx.msg;
+  const sender = msg.from;
+
+  if (!sender || sender?.is_bot) {
+    return;
+  }
+
+  if (!payload.trim()) {
+    const message = replyForCleanMessege(ctx.from?.first_name);
+    await ctx.reply(message, {
+      parse_mode: "HTML",
+    });
+    return;
+  }
+
+  const message = new Message({
+    uid: sender.id,
+    message: payload.trim(),
+  });
+
+  await message.save();
+
+  const adminMsg = tellAdminIncommingMessage(sender.id, payload.trim());
+  await ctx.api.sendMessage(env.admin, adminMsg, {
+    parse_mode: "HTML",
+  });
+
+  await ctx.reply("Your message has been delivered!")
+};

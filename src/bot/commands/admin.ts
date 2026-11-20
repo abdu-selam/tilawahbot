@@ -431,5 +431,5 @@ export const announceQariUpload = async (api: Api<RawApi>, qari: QariType) => {
         });
       }),
     );
-  });
+  }, 1000);
 };

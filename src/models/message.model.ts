@@ -6,15 +6,22 @@ const messageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     message: {
       type: String,
       required: true,
+    },
+
+    replied: {
+      type: String,
+      default: "",
     },
 
     read: {
       type: Boolean,
       default: false,
     },
+
     reply: {
       type: Boolean,
       default: false,
