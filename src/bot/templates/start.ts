@@ -246,6 +246,7 @@ ${name ?? ""} please provide your message as the following:
 export const tellAdminIncommingMessage = (
   uid: string | number,
   message: string,
+  messageId: string,
 ) => {
   return `
 <blockquote>Message Incomming</blockquote>
@@ -256,8 +257,8 @@ export const tellAdminIncommingMessage = (
 ${message}
 </pre>
 
-/read ${uid} your-emoji
+<code>/read ${messageId}</code>
 
-/reply ${uid} your-message
+<code>/reply ${messageId} your-message</code>
 `.trim();
 };

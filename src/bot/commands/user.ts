@@ -18,9 +18,10 @@ import {
   generateSuraKeyboard,
 } from "../services/button.service.js";
 import type { Env, EnvGeneral } from "../../types/bot.types.js";
-import { isSura } from "../../utils/formatter.js";
+import { isEmoji, isSura } from "../../utils/formatter.js";
 import SuraClass from "../../schemas/sura.schema.js";
 import env from "../../utils/env.js";
+import mongoose from "mongoose";
 
 export const start = async (
   ctx: CommandContext<Context>,
@@ -185,6 +186,12 @@ export const sendMessage = async (ctx: CommandContext<Context>) => {
   const msg = ctx.msg;
   const sender = msg.from;
 
+  const chatType = ctx.chat.type;
+
+  if (chatType !== "private") {
+    return;
+  }
+
   if (!sender || sender?.is_bot) {
     return;
   }
@@ -200,14 +207,53 @@ export const sendMessage = async (ctx: CommandContext<Context>) => {
   const message = new Message({
     uid: sender.id,
     message: payload.trim(),
+    messageId: msg.message_id,
+    chatId: ctx.chat.id,
   });
 
   await message.save();
 
-  const adminMsg = tellAdminIncommingMessage(sender.id, payload.trim());
+  const adminMsg = tellAdminIncommingMessage(
+    sender.id,
+    payload.trim(),
+    message.id,
+  );
   await ctx.api.sendMessage(env.admin, adminMsg, {
     parse_mode: "HTML",
   });
 
-  await ctx.reply("Your message has been delivered!")
+  await ctx.reply("Your message has been delivered!");
+};
+
+export const reactOnMessage = async (ctx: CommandContext<Context>) => {
+  const isAdmin = await checkAdmin(ctx);
+
+  if (!isAdmin) return;
+  const messageId = ctx.match.trim();
+
+  if (!messageId) {
+    await ctx.reply("Please provide valid format");
+    return;
+  }
+
+  if (!mongoose.isValidObjectId(messageId)) {
+    await ctx.reply("Please provide valid message id");
+    return;
+  }
+
+  const message = await Message.findOne({ _id: messageId } as any);
+
+  if (!message) {
+    await ctx.reply("Please provide valid message id");
+    return;
+  }
+
+  message.read = true;
+
+  await message.save();
+  await ctx.api.setMessageReaction(message.chatId, message.messageId, [
+    { type: "emoji", emoji: "🙏" },
+  ]);
+
+  await ctx.react("🔥");
 };

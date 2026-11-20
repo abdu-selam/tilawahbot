@@ -158,3 +158,9 @@ export const escapeHtml = (text: string): string => {
       })[char]!,
   );
 };
+
+export const isEmoji = (input: string): boolean => {
+  const emojiRegex = /^\p{Extended_Pictographic}$/u;
+
+  return emojiRegex.test(input);
+};

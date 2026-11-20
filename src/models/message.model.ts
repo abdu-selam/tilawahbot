@@ -26,6 +26,16 @@ const messageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    messageId: {
+      type: String,
+      required: true,
+    },
+
+    chatId: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true },
 );
