@@ -2,7 +2,11 @@ import type { QariType } from "../../schemas/qari.schema.js";
 import QariClass from "../../schemas/qari.schema.js";
 import type { SuraType } from "../../schemas/sura.schema.js";
 import type { ParsedError } from "../../types/bot.types.js";
-import { escapeHtml, formatDuration, formatFileSize } from "../../utils/formatter.js";
+import {
+  escapeHtml,
+  formatDuration,
+  formatFileSize,
+} from "../../utils/formatter.js";
 
 type RecitationType = {
   fileSize: number;
@@ -173,7 +177,14 @@ Message added! add keyboards with this structure
 </code></pre>
 `;
 
-export const userData = (user: Record<string, string | number>): string => {
+export const userData = (
+  user: Record<string, string | number>,
+  withUid: boolean = false,
+): string => {
+  let anchor = `<a href="https://t.me/${user.username}">${user.username} is here</a>`;
+  if (withUid) {
+    anchor = `<a href="tg://user?id=${user.uid}">${user.uid} is here</a>`;
+  }
   return `
 <blockquote>User found</blockquote>
 
@@ -181,11 +192,14 @@ export const userData = (user: Record<string, string | number>): string => {
 ${JSON.stringify(user, null, 2)}
 </code></pre>
 
-<a href="https://t.me/${user.username}">${user.username} is here</a>
+${anchor}
 `.trim();
 };
 
-export const errorHtml = (err: ParsedError, id: string | number | undefined): string => {
+export const errorHtml = (
+  err: ParsedError,
+  id: string | number | undefined,
+): string => {
   return `
 <blockquote>BOT ERROR</blockquote>
 
@@ -200,5 +214,20 @@ export const errorHtml = (err: ParsedError, id: string | number | undefined): st
 
 <b>Stack Trace:</b>
 <pre>${escapeHtml(err.stack.slice(0, 2500))}</pre>
- `.trim()
+ `.trim();
+};
+
+export const qariCompleteHTML = (qari: QariType): string => {
+  return `
+<b>السلام عليكم ورحمة الله وبركاته</b>
+
+<blockquote>New Qari has been added!</blockquote>
+
+<b>Qari</b> ${qari.name} | ${qari.nameAr}
+
+May Allah accept your listening, recitation, and remembrance of Him.
+<b>May the Quran always be your companion.</b>
+
+<blockquote>Don't forget the developer on your prayer!</blockquote>
+`.trim();
 };

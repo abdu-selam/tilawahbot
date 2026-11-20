@@ -176,3 +176,7 @@ export const randomQirat = async (ctx: CommandContext<Context>) => {
     reply_markup: keyboard,
   });
 };
+
+export const sendMessage = async (ctx: CommandContext<Context>) => {
+  
+}

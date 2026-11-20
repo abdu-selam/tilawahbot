@@ -80,12 +80,18 @@ export const formatDuration = (second: number): string => {
   return hourStr;
 };
 
-export const isSura = (input: any): boolean => {
+export const isSura = (input: unknown): boolean => {
   const sura = Number(input);
 
   return (
     !Number.isNaN(sura) && sura > 0 && sura < 115 && Number.isInteger(sura)
   );
+};
+
+export const isNumber = (input: unknown): boolean => {
+  const number = Number(input);
+
+  return !Number.isNaN(number);
 };
 
 export const randomNum = (start: number, end: number): number => {

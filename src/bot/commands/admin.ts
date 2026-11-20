@@ -1,7 +1,17 @@
-import { InlineKeyboard, type CommandContext, type Context } from "grammy";
-import QariClass from "../../schemas/qari.schema.js";
+import {
+  Api,
+  InlineKeyboard,
+  type CommandContext,
+  type Context,
+  type RawApi,
+} from "grammy";
+import QariClass, { type QariType } from "../../schemas/qari.schema.js";
 import { checkAdmin } from "../middlewares/auth.middleware.js";
-import { formatKeybord, formatMessage } from "../../utils/formatter.js";
+import {
+  formatKeybord,
+  formatMessage,
+  isNumber,
+} from "../../utils/formatter.js";
 import type {
   CtxForMessage,
   CtxWithPicture,
@@ -10,7 +20,12 @@ import type {
 } from "../../types/bot.types.js";
 import { Recite, User } from "../../models/models.js";
 import Announce from "../../schemas/announce.schema.js";
-import { addKeyboardText, userData } from "../templates/start.js";
+import {
+  addKeyboardText,
+  qariCompleteHTML,
+  userData,
+} from "../templates/start.js";
+import env from "../../utils/env.js";
 
 export const addAdmin = async (ctx: CommandContext<Context>) => {
   const isAdmin = await checkAdmin(ctx);
@@ -324,6 +339,11 @@ export const totalUsers = async (ctx: CommandContext<Context>) => {
   if (!isAdmin) return;
   const payload = ctx.match.trim();
   if (payload) {
+    if (isNumber(payload.trim())) {
+      const uid = Number(payload.trim());
+      await getUserByUserId(ctx, uid);
+      return;
+    }
     await getUserByUsername(ctx, payload);
     return;
   }
@@ -347,5 +367,69 @@ export const getUserByUsername = async (
 
   await ctx.reply(response, {
     parse_mode: "HTML",
+  });
+};
+
+export const getUserByUserId = async (
+  ctx: CommandContext<Context>,
+  payload: number,
+) => {
+  const user = await User.findOne({ uid: payload } as any).lean();
+
+  let response = `User Not Found with <a href="tg://user?id=${payload}">${payload}</a>`;
+  if (user) {
+    response = userData(user, true);
+  }
+
+  await ctx.reply(response, {
+    parse_mode: "HTML",
+  });
+};
+
+export const announceQariUpload = async (api: Api<RawApi>, qari: QariType) => {
+  const users = await User.find({ utype: "user" } as any).lean();
+
+  const chunks: any[][] = [];
+
+  for (let i = 0; i < users.length; i += 20) {
+    chunks.push(users.slice(i, i + 20));
+  }
+
+  const keyboard = new InlineKeyboard()
+    .text(`Get ${qari.name}`, `qari:${qari.id}`)
+    .row()
+    .text("Qari", "select_qari")
+    .text("Sura", "select_sura");
+
+  const caption = qariCompleteHTML(qari);
+
+  let i = 0;
+  const interval = setInterval(async () => {
+    if (i >= chunks.length) {
+      clearInterval(interval);
+      const adminMsg = `Qari upload announcement completed!\n\n` + caption;
+
+      api.sendMessage(env.admin, adminMsg, {
+        parse_mode: "HTML",
+      });
+      return;
+    }
+
+    const currChunk = chunks[i];
+    i++;
+
+    if (!currChunk) {
+      return;
+    }
+
+    await Promise.all(
+      currChunk.map((user) => {
+        return api.sendPhoto(user.uid, qari.image, {
+          caption,
+          reply_markup: keyboard,
+          parse_mode: "HTML",
+        });
+      }),
+    );
   });
 };

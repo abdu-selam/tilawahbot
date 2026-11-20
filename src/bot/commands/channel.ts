@@ -3,6 +3,7 @@ import QariClass from "../../schemas/qari.schema.js";
 import { Recite } from "../../models/models.js";
 import SuraClass from "../../schemas/sura.schema.js";
 import type { CtxForChnnelMessage } from "../../types/bot.types.js";
+import { announceQariUpload } from "./admin.js";
 
 export const uploadQurans = async (ctx: CtxForChnnelMessage) => {
   const message = ctx.msg;
@@ -33,4 +34,8 @@ export const uploadQurans = async (ctx: CtxForChnnelMessage) => {
   await recite.save();
   await QariClass.addUploaded(QariClass.qari?.id!);
   await ctx.react("👌");
+
+  if (QariClass.current === 115) {
+    await announceQariUpload(ctx.api, QariClass.qari!);
+  }
 };
