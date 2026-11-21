@@ -1,4 +1,5 @@
 import {
+  GrammyError,
   InlineKeyboard,
   type CallbackQueryContext,
   type Context,

@@ -1,4 +1,5 @@
 import {
+  GrammyError,
   InlineKeyboard,
   type CallbackQueryContext,
   type Context,
@@ -103,9 +104,20 @@ export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   await answerCallback(ctx);
-  await ctx.editMessageReplyMarkup({
-    reply_markup: keyboard,
-  });
+  try {
+    await ctx.editMessageReplyMarkup({
+      reply_markup: keyboard,
+    });
+  } catch (error) {
+    if (
+      error instanceof GrammyError &&
+      error.description.includes("message is not modified")
+    ) {
+      return;
+    }
+
+    throw error;
+  }
 };
 
 export const selectSurahForQari = async (
@@ -195,9 +207,21 @@ export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   await answerCallback(ctx);
-  await ctx.editMessageReplyMarkup({
-    reply_markup: keyboard,
-  });
+
+  try {
+    await ctx.editMessageReplyMarkup({
+      reply_markup: keyboard,
+    });
+  } catch (error) {
+    if (
+      error instanceof GrammyError &&
+      error.description.includes("message is not modified")
+    ) {
+      return;
+    }
+
+    throw error;
+  }
 };
 
 export const selectQarisForSura = async (
