@@ -30,6 +30,11 @@ With this bot, you can easily access beautiful Quran recitations from different 
 <b>Sura<em> — Click the </em>Sura</b> button to explore the Surahs of the Holy Quran and choose the one you wish to listen to.
 
 ━━━━━━━━━━━━━━━━━━
+<b>Ypu can use thefollowing command to: </b>
+
+/help - For help 
+/random - Get a random Quran recitation
+/message Your Message Here - to send message for the creator
 
 <blockquote><b><em>رَبَّنَا اجْعَلِ الْقُرْآنَ رَبِيعَ قُلُوبِنَا وَنُورَ صُدُورِنَا</em></b></blockquote>
 
@@ -146,6 +151,7 @@ export const helpMessage = `
 /qari - Browse available Qaris
 /sura - Browse all Surahs
 /random - Get a random Quran recitation
+/message Your Message Here - to send message for the creator
 
 <b>How to Use</b>
 
