@@ -1,5 +1,6 @@
 import {
   Api,
+  GrammyError,
   InlineKeyboard,
   type CommandContext,
   type Context,
@@ -386,6 +387,34 @@ export const getUserByUserId = async (
   });
 };
 
+const announceForOne = async (
+  user: any,
+  qari: QariType,
+  caption: string,
+  keyboard: InlineKeyboard,
+  api: Api<RawApi>,
+) => {
+  try {
+    await api.sendPhoto(user.uid, qari.image, {
+      caption,
+      reply_markup: keyboard,
+      parse_mode: "HTML",
+    });
+  } catch (error) {
+    if (error instanceof GrammyError) {
+      const code = error.error_code;
+
+      if (code === 429) {
+        await new Promise((resolve) => setTimeout(resolve, 60000));
+
+        await announceForOne(user, qari, caption, keyboard, api);
+      }
+    } else {
+      throw error;
+    }
+  }
+};
+
 export const announceQariUpload = async (api: Api<RawApi>, qari: QariType) => {
   const users = await User.find({ utype: "user" } as any).lean();
 
@@ -424,11 +453,7 @@ export const announceQariUpload = async (api: Api<RawApi>, qari: QariType) => {
 
     await Promise.all(
       currChunk.map((user) => {
-        return api.sendPhoto(user.uid, qari.image, {
-          caption,
-          reply_markup: keyboard,
-          parse_mode: "HTML",
-        });
+        return announceForOne(user, qari, caption, keyboard, api);
       }),
     );
   }, 1000);

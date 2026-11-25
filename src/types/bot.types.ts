@@ -15,20 +15,20 @@ export interface EnvGeneral {
   qurans: number;
 
   bot: string;
-  port: string | number;
+  port: number;
 }
 
 export interface Env {
   token: string;
   mongo: string;
-  WEBHOOK_SECRET: string;
   admin: number;
-
+  
   pictures: number;
   qurans: number;
-
+  
   bot: string;
-
+  
+  WEBHOOK_SECRET: string;
   MONGODB: DurableObjectNamespace;
 }
 

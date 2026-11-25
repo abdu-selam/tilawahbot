@@ -18,7 +18,10 @@ import {
   generateSuraKeyboard,
 } from "../services/button.service.js";
 import { Recite } from "../../models/models.js";
-import { answerCallback } from "../middlewares/button.middleware.js";
+import {
+  answerCallback,
+  editReplyMessageMiddleware,
+} from "../middlewares/button.middleware.js";
 
 export const selectQaris = async (ctx: CallbackQueryContext<Context>) => {
   await answerCallback(ctx);
@@ -81,9 +84,11 @@ export const nextQaris = async (ctx: CallbackQueryContext<Context>) => {
     page,
   );
 
-  await ctx.editMessageReplyMarkup({
-    reply_markup: keyboard,
-  });
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageReplyMarkup({
+      reply_markup: keyboard,
+    }),
+  );
 };
 
 export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
@@ -104,20 +109,11 @@ export const nextSuras = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   await answerCallback(ctx);
-  try {
-    await ctx.editMessageReplyMarkup({
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageReplyMarkup({
       reply_markup: keyboard,
-    });
-  } catch (error) {
-    if (
-      error instanceof GrammyError &&
-      error.description.includes("message is not modified")
-    ) {
-      return;
-    }
-
-    throw error;
-  }
+    }),
+  );
 };
 
 export const selectSurahForQari = async (
@@ -153,16 +149,18 @@ export const selectSurahForQari = async (
   const html = choseSuraForQari(qari.name, qari.nameAr);
 
   await answerCallback(ctx);
-  await ctx.editMessageMedia(
-    {
-      type: "photo",
-      media: qari.image,
-      caption: html,
-      parse_mode: "HTML",
-    },
-    {
-      reply_markup: keyboard,
-    },
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageMedia(
+      {
+        type: "photo",
+        media: qari.image,
+        caption: html,
+        parse_mode: "HTML",
+      },
+      {
+        reply_markup: keyboard,
+      },
+    ),
   );
 };
 
@@ -207,21 +205,11 @@ export const nextSuraForQari = async (ctx: CallbackQueryContext<Context>) => {
   }
 
   await answerCallback(ctx);
-
-  try {
-    await ctx.editMessageReplyMarkup({
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageReplyMarkup({
       reply_markup: keyboard,
-    });
-  } catch (error) {
-    if (
-      error instanceof GrammyError &&
-      error.description.includes("message is not modified")
-    ) {
-      return;
-    }
-
-    throw error;
-  }
+    }),
+  );
 };
 
 export const selectQarisForSura = async (
@@ -250,11 +238,12 @@ export const selectQarisForSura = async (
   );
 
   const html = choseQariForSura({ ...sura });
-
-  await ctx.editMessageText(html, {
-    parse_mode: "HTML",
-    reply_markup: keyboard,
-  });
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageText(html, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    }),
+  );
 };
 
 export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
@@ -306,11 +295,12 @@ export const nextQariForSura = async (ctx: CallbackQueryContext<Context>) => {
   );
 
   const html = choseQariForSura({ ...sura });
-
-  await ctx.editMessageText(html, {
-    parse_mode: "HTML",
-    reply_markup: keyboard,
-  });
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageText(html, {
+      parse_mode: "HTML",
+      reply_markup: keyboard,
+    }),
+  );
 };
 
 export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
@@ -355,15 +345,17 @@ export const sendQuranAudio = async (ctx: CallbackQueryContext<Context>) => {
     .text("Qari", "select_qari")
     .text("Sura", "select_sura");
 
-  await ctx.editMessageMedia(
-    {
-      type: "audio",
-      media: recite.audio,
-      caption: html,
-      parse_mode: "HTML",
-    },
-    {
-      reply_markup: keyboard,
-    },
+  editReplyMessageMiddleware(() =>
+    ctx.editMessageMedia(
+      {
+        type: "audio",
+        media: recite.audio,
+        caption: html,
+        parse_mode: "HTML",
+      },
+      {
+        reply_markup: keyboard,
+      },
+    ),
   );
 };

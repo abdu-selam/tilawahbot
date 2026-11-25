@@ -36,7 +36,7 @@ import {
 } from "./commands/buttons.js";
 import type { Env, EnvGeneral } from "../types/bot.types.js";
 import { errorHtml } from "./templates/start.js";
-import { escapeHtml, parseError } from "../utils/formatter.js";
+import { parseError } from "../utils/formatter.js";
 
 export function createBot(token: string, env: EnvGeneral | Env) {
   const bot = new Bot(token);

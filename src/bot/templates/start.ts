@@ -45,7 +45,7 @@ May Allah accept your listening, recitation, and remembrance of Him.
 <b>May the Quran always be your companion.</b>
 `;
 
-export const chooseQari = () => {
+export const chooseQari = (): string => {
   return `<blockquote>Choose Your Qari (Total: ${QariClass.avalableQaris()} Qaris)</blockquote>
 
 Listen to beautiful Quran recitations from different Qaris.

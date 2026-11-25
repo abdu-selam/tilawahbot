@@ -12,7 +12,7 @@ const env: EnvGeneral & { port: string | number } = {
   qurans: Number(process.env.QURAN_CHANNEL_ID) || 0,
 
   bot: process.env.BOT_LINK || "",
-  port: process.env.PORT || 5000,
+  port: Number(process.env.PORT) || 5000,
 };
 
 export default env;
